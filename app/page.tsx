@@ -11,7 +11,7 @@ export default async function Home() {
   return (
     <main className="site-shell">
       <nav className="topbar" aria-label="Primary navigation">
-        <Link href="/" className="brand" aria-label="VoteMania home"><span className="brand-mark">V</span><span>VOTEMANIA</span></Link>
+        <Link href="/" className="brand" aria-label="VoteManiaX home"><span className="brand-mark">V</span><span>VOTEMANIAX</span></Link>
         <div className="nav-links"><Link href="/events">Events</Link><Link href="/contestants">Contestants</Link><Link href="/leaderboard">Leaderboard</Link></div>
         <Link className="nav-cta" href="/contestants">Vote now <ArrowUpRight size={16} /></Link>
       </nav>
@@ -46,7 +46,7 @@ export default async function Home() {
       </section>
       <section className="newsletter-section">
         <div><p className="eyebrow">STAY IN THE LOOP</p><h2>Don’t miss<br/>the next <em>moment.</em></h2></div>
-        <div><p>Get VoteMania updates about new events, voting deadlines, results and the talent everyone is talking about.</p><NewsletterForm/><small>We respect your privacy. Unsubscribe anytime.</small></div>
+        <div><p>Get VoteManiaX updates about new events, voting deadlines, results and the talent everyone is talking about.</p><NewsletterForm/><small>We respect your privacy. Unsubscribe anytime.</small></div>
       </section>
       <section className="final-cta"><span>YOUR VOTE. THEIR MOMENT.</span><h2>Ready to move<br/>the ranking?</h2><Link className="primary-action" href="/contestants">Meet the performers <ArrowUpRight size={18}/></Link></section>
       <PublicFooter />

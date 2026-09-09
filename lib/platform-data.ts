@@ -9,5 +9,5 @@ export const contestants = [
   { slug:'tafadzwa-mashingaidze-creator', name:'Tafadzwa Mashingaidze', category:'Content Creators', votes:24, bio:'A creator bringing personality and momentum to every format.' },
   { slug:'tafadzwa-mashingaidze-singer', name:'Tafadzwa Mashingaidze', category:'Singers', votes:22, bio:'A performance-led vocalist finding a distinctive lane.' },
 ];
-export const currentEvent = { slug:'season-one', name:'VoteMania Season 01', status:'live', startDate:'2026-09-01', endDate:'2026-09-30', price:0.5, currency:'USD', description:'Nine performers. One live leaderboard. The crowd decides who owns the moment.' };
+export const currentEvent = { slug:'season-one', name:'VoteManiaX Season 01', status:'live', startDate:'2026-09-01', endDate:'2026-09-30', price:0.5, currency:'USD', description:'Nine performers. One live leaderboard. The crowd decides who owns the moment.' };
 export const totalVotes = contestants.reduce((sum,item)=>sum+item.votes,0);
