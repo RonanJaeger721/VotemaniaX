@@ -1,0 +1,3 @@
+import { PublicFooter,PublicHeader } from '@/components/public-shell';
+const steps=[['01','Find your favourite','Explore the live event and discover the performer who earns your support.'],['02','Choose your support','Select how many votes to cast and review the total before payment.'],['03','Move the ranking','Once payment is verified, every vote lands on the live leaderboard.']];
+export default function How(){return <main className="site-shell"><PublicHeader/><section className="page-intro"><p className="eyebrow">THREE MOVES. REAL IMPACT.</p><h1>Make your<br/><em>vote count.</em></h1></section><section className="steps">{steps.map(s=><article key={s[0]}><span>{s[0]}</span><h2>{s[1]}</h2><p>{s[2]}</p></article>)}</section><PublicFooter/></main>}
