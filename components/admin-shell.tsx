@@ -1,3 +1,15 @@
-import Link from 'next/link'; import { Activity,ArrowLeft,CalendarDays,CreditCard,FileClock,LayoutDashboard,LogOut,Settings,ShieldCheck,Users,WalletCards } from 'lucide-react'; import { chatGPTSignOutPath } from '@/app/chatgpt-auth';
-export const adminNav=[['Dashboard',LayoutDashboard,''],['Events',CalendarDays,'events'],['Participants',Users,'participants'],['Payments',WalletCards,'payments'],['Payment methods',CreditCard,'payment-methods'],['Settings',Settings,'settings'],['Admins',ShieldCheck,'admins'],['Audit log',FileClock,'audit-log'],['Vote ledger',Activity,'votes'] ] as const;
-export function AdminShell({user,active,children}:{user:{displayName:string};active:string;children:React.ReactNode}){return <main className="admin-shell"><aside><Link href="/admin" className="brand"><span className="brand-mark">VX</span><span>VOTEMANIA<b>X</b></span></Link><Link className="back-public" href="/"><ArrowLeft size={14}/> Back to public site</Link><small>PLATFORM</small><nav>{adminNav.map(([label,Icon,path])=><Link className={active===path?'active':''} href={`/admin/${path}`} key={path}><Icon size={17}/>{label}</Link>)}</nav><div className="admin-user"><span>{user.displayName.charAt(0).toUpperCase()}</span><div><strong>{user.displayName}</strong><small>Administrator</small></div><Link href={chatGPTSignOutPath('/')} aria-label="Sign out"><LogOut size={16}/></Link></div></aside><section className="admin-main">{children}</section></main>}
+import Link from 'next/link';
+import {Activity,ArrowLeft,CalendarDays,CreditCard,FileClock,LayoutDashboard,LogIn,LogOut,Settings,ShieldCheck,Users,WalletCards} from 'lucide-react';
+import {chatGPTSignInPath,chatGPTSignOutPath} from '@/app/chatgpt-auth';
+
+export const adminNav=[['Dashboard',LayoutDashboard,''],['Events',CalendarDays,'events'],['Participants',Users,'participants'],['Payments',WalletCards,'payments'],['Payment methods',CreditCard,'payment-methods'],['Settings',Settings,'settings'],['Admins',ShieldCheck,'admins'],['Audit log',FileClock,'audit-log'],['Vote ledger',Activity,'votes']] as const;
+
+export function AdminShell({user,active,children}:{user:{displayName:string}|null;active:string;children:React.ReactNode}){
+  return <main className="admin-shell"><aside>
+    <Link href="/admin" className="brand"><span className="brand-mark">VX</span><span>VOTEMANIA<b>X</b></span></Link>
+    <Link className="back-public" href="/"><ArrowLeft size={14}/> Back to public site</Link>
+    <small>PLATFORM</small>
+    <nav>{adminNav.map(([label,Icon,path])=><Link className={active===path?'active':''} href={`/admin/${path}`} key={path}><Icon size={17}/>{label}</Link>)}</nav>
+    {user?<div className="admin-user"><span>{user.displayName.charAt(0).toUpperCase()}</span><div><strong>{user.displayName}</strong><small>Administrator</small></div><Link href={chatGPTSignOutPath('/')} aria-label="Sign out"><LogOut size={16}/></Link></div>:<div className="admin-user admin-guest"><span>VX</span><div><strong>Read-only view</strong><small>Sign in to manage</small></div><Link href={chatGPTSignInPath(`/admin/${active}`)} aria-label="Sign in to manage"><LogIn size={16}/></Link></div>}
+  </aside><section className="admin-main">{children}</section></main>;
+}
