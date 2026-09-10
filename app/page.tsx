@@ -3,21 +3,23 @@ import Link from 'next/link';
 import { ArrowUpRight, Play, Radio, Sparkles } from 'lucide-react';
 import { PublicFooter,PublicHeader } from '@/components/public-shell';
 import { NewsletterForm } from '@/components/newsletter-form';
-import { getLiveEvent, getPublicContestants } from '@/lib/platform-store';
+import { RoundCountdown } from '@/components/round-countdown';
+import { getCurrentRound, getLiveEvent, getPublicContestants } from '@/lib/platform-store';
 
 export const dynamic='force-dynamic';
 export default async function Home() {
-  const contestants=await getPublicContestants(); const liveEvent=await getLiveEvent(); const totalVotes=contestants.reduce((sum,item)=>sum+item.votes,0); const leaders=contestants.slice(0,3);
+  const contestants=await getPublicContestants(); const liveEvent=await getLiveEvent(); const round=await getCurrentRound(); const totalVotes=contestants.reduce((sum,item)=>sum+item.votes,0); const leaders=contestants.slice(0,3);
   return (
     <main className="site-shell">
       <PublicHeader/>
       <section className="hero">
         <div className="hero-copy">
-          <div className="live-pill"><Radio size={14} /> {liveEvent?'Voting live':'No live voting'} <span>{liveEvent?.name??'Next event soon'}</span></div>
-          <p className="eyebrow">THE CROWD DECIDES</p>
-          <h1>Every vote<br />moves the <em>moment.</em></h1>
-          <p className="hero-deck">Back the performers you believe in. Watch the rankings shift and help turn a rising voice into the name everyone remembers.</p>
-          <div className="hero-actions"><Link className="primary-action" href="/contestants">Meet the talent <ArrowUpRight size={18} /></Link><Link className="text-action" href="/leaderboard"><Play size={15} fill="currentColor" /> Live leaderboard</Link></div>
+          <div className="live-pill"><Radio size={14} /> {round?.status==='live'?'Voting live':'Voting closed'} <span>{round?.name??'Next week soon'}</span></div>
+          <p className="eyebrow">SEVEN DAYS · ONE LEADERBOARD</p>
+          <h1>This week’s vote<br />is <em>live.</em></h1>
+          <p className="hero-deck">Choose the performer you believe in before the weekly clock reaches zero.</p>
+          {round&&<RoundCountdown startAt={round.startAt.toISOString()} endAt={round.endAt.toISOString()}/>} 
+          <div className="hero-actions"><Link className="primary-action" href={round?`/vote/${round.slug}`:'/events'}>Vote this week <ArrowUpRight size={18} /></Link><Link className="text-action" href={round?`/leaderboard/${round.slug}`:'/leaderboard'}><Play size={15} fill="currentColor" /> Live leaderboard</Link></div>
           <div className="signal-line"><span /> {totalVotes} verified votes and counting</div>
         </div>
         <div className="hero-stage" aria-label="Featured performer Rachel Rashyn">

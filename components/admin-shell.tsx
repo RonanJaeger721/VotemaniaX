@@ -1,12 +1,13 @@
 import Link from 'next/link';
-import {Activity,ArrowLeft,CalendarDays,CreditCard,FileClock,LayoutDashboard,LogIn,LogOut,Settings,ShieldCheck,Users,WalletCards} from 'lucide-react';
+import {Activity,ArrowLeft,CalendarClock,CalendarDays,CreditCard,FileClock,LayoutDashboard,LogIn,LogOut,Settings,ShieldCheck,Users,WalletCards} from 'lucide-react';
 import {chatGPTSignInPath,chatGPTSignOutPath} from '@/app/chatgpt-auth';
+import {Brand} from '@/components/public-shell';
 
-export const adminNav=[['Dashboard',LayoutDashboard,''],['Events',CalendarDays,'events'],['Participants',Users,'participants'],['Payments',WalletCards,'payments'],['Payment methods',CreditCard,'payment-methods'],['Settings',Settings,'settings'],['Admins',ShieldCheck,'admins'],['Audit log',FileClock,'audit-log'],['Vote ledger',Activity,'votes']] as const;
+export const adminNav=[['Overview',LayoutDashboard,''],['Events',CalendarDays,'events'],['Participants',Users,'participants'],['Voting rounds',CalendarClock,'voting-rounds'],['Payments',WalletCards,'payments'],['Payment methods',CreditCard,'payment-methods'],['Analytics',Activity,'analytics'],['Settings',Settings,'settings'],['Admins',ShieldCheck,'admins'],['Audit log',FileClock,'audit-log'],['Vote ledger',Activity,'votes']] as const;
 
 export function AdminShell({user,active,children}:{user:{displayName:string}|null;active:string;children:React.ReactNode}){
   return <main className="admin-shell"><aside>
-    <Link href="/admin" className="brand"><span className="brand-mark">VX</span><span>VOTEMANIA<b>X</b></span></Link>
+    <Link href="/admin" className="brand"><Brand/></Link>
     <Link className="back-public" href="/"><ArrowLeft size={14}/> Back to public site</Link>
     <small>PLATFORM</small>
     <nav>{adminNav.map(([label,Icon,path])=><Link className={active===path?'active':''} href={`/admin/${path}`} key={path}><Icon size={17}/>{label}</Link>)}</nav>
