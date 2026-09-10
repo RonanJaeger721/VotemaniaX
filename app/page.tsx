@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, Play, Radio, Sparkles } from 'lucide-react';
-import { PublicFooter } from '@/components/public-shell';
+import { PublicFooter,PublicHeader } from '@/components/public-shell';
 import { NewsletterForm } from '@/components/newsletter-form';
 import { getLiveEvent, getPublicContestants } from '@/lib/platform-store';
 
@@ -10,11 +10,7 @@ export default async function Home() {
   const contestants=await getPublicContestants(); const liveEvent=await getLiveEvent(); const totalVotes=contestants.reduce((sum,item)=>sum+item.votes,0); const leaders=contestants.slice(0,3);
   return (
     <main className="site-shell">
-      <nav className="topbar" aria-label="Primary navigation">
-        <Link href="/" className="brand" aria-label="VoteManiaX home"><span className="brand-mark">V</span><span>VOTEMANIAX</span></Link>
-        <div className="nav-links"><Link href="/events">Events</Link><Link href="/contestants">Contestants</Link><Link href="/leaderboard">Leaderboard</Link></div>
-        <Link className="nav-cta" href="/contestants">Vote now <ArrowUpRight size={16} /></Link>
-      </nav>
+      <PublicHeader/>
       <section className="hero">
         <div className="hero-copy">
           <div className="live-pill"><Radio size={14} /> {liveEvent?'Voting live':'No live voting'} <span>{liveEvent?.name??'Next event soon'}</span></div>
@@ -44,6 +40,7 @@ export default async function Home() {
         <header><p className="eyebrow">HOW VOTING WORKS</p><h2>Three moves.<br/>Real <em>impact.</em></h2></header>
         <div>{[['01','Find your favourite','Browse the performers and choose the talent that moves you.'],['02','Choose your support','Select how many votes to cast and review your total.'],['03','Cast your vote','Verified votes move your favourite up the live rankings.']].map(step=><article key={step[0]}><span>{step[0]}</span><h3>{step[1]}</h3><p>{step[2]}</p></article>)}</div>
       </section>
+      <section className="discover-band"><div><p className="eyebrow">SEARCH THE STAGE</p><h2>One name can<br/>change the room.</h2></div><div><p>Search performers, categories and live events from one focused discovery screen.</p><Link className="primary-action" href="/search">Start searching <ArrowUpRight size={18}/></Link></div></section>
       <section className="newsletter-section">
         <div><p className="eyebrow">STAY IN THE LOOP</p><h2>Don’t miss<br/>the next <em>moment.</em></h2></div>
         <div><p>Get VoteManiaX updates about new events, voting deadlines, results and the talent everyone is talking about.</p><NewsletterForm/><small>We respect your privacy. Unsubscribe anytime.</small></div>
