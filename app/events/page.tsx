@@ -13,7 +13,8 @@ export default async function Events({ searchParams }: { searchParams: Promise<{
     .select()
     .from(events)
     .orderBy(desc(events.createdAt));
-  const filtered = rows.filter((event) => status === 'all' || (status === 'completed' ? event.status === 'closed' : event.status === status));
+  const publicRows = rows.filter((event) => ['published', 'upcoming', 'live', 'completed'].includes(event.status));
+  const filtered = publicRows.filter((event) => status === 'all' || event.status === status);
   return (
     <main className="site-shell">
       <PublicHeader />
@@ -58,7 +59,7 @@ export default async function Events({ searchParams }: { searchParams: Promise<{
                 </div>
               </dl>
               <Link className="primary-action" href={`/events/${event.slug}`}>
-                {event.status === 'closed'
+                {event.status === 'completed'
                   ? 'View results'
                   : event.status === 'live'
                     ? 'Vote now'

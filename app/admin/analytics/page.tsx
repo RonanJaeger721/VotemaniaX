@@ -1,10 +1,10 @@
 import { AdminShell } from '@/components/admin-shell';
-import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { requireChatGPTUser } from '@/app/chatgpt-auth';
 import { getAdminMetrics, getPublicContestants } from '@/lib/platform-store';
 export const dynamic = 'force-dynamic';
 export default async function Analytics() {
   const [user, metrics, people] = await Promise.all([
-    getChatGPTUser(),
+    requireChatGPTUser('/admin/analytics'),
     getAdminMetrics(),
     getPublicContestants(),
   ]);

@@ -169,6 +169,15 @@ export const subscribers = sqliteTable('subscribers', {
   active: integer('active', { mode: 'boolean' }).notNull().default(true),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 });
+export const contactMessages = sqliteTable('contact_messages', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  subject: text('subject').notNull(),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('new'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
 export const auditLogs = sqliteTable('audit_logs', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   adminUserId: text('admin_user_id').notNull(),

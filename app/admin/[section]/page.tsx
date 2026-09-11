@@ -11,6 +11,7 @@ import {
   faqs,
   media,
   payments,
+  paymentMethods,
   siteSettings,
   subscribers,
   votes,
@@ -47,6 +48,7 @@ export default async function AdminSection({
     voteRows,
     settingRows,
     auditRows,
+    configuredMethods,
   ] = await Promise.all([
     db.select().from(events).orderBy(desc(events.createdAt)),
     db.select({ id: contestants.id, eventId: contestants.eventId, name: contestants.name, slug: contestants.slug, category: contestants.category, bio: contestants.bio, status: contestants.status, votes: sql<number>`coalesce(sum(${votes.quantity}),0)` }).from(contestants).leftJoin(votes, eq(contestants.id, votes.contestantId)).groupBy(contestants.id).orderBy(desc(sql`coalesce(sum(${votes.quantity}),0)`)),
@@ -54,6 +56,7 @@ export default async function AdminSection({
     db.select().from(votes).orderBy(desc(votes.createdAt)),
     db.select().from(siteSettings),
     db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)),
+    db.select().from(paymentMethods),
   ]);
   const filteredEvents = eventRows.filter(
     (e) =>
@@ -78,6 +81,7 @@ export default async function AdminSection({
     ),
   );
   const editing = contestantRows.find((row) => String(row.id) === edit);
+  const editingEvent = eventRows.find((row) => String(row.id) === edit);
   return (
     <AdminShell user={user} active={section}>
       <header>
@@ -90,7 +94,7 @@ export default async function AdminSection({
       {section === 'events' && (
         <>
           <Toolbar
-            statuses={['draft', 'published', 'upcoming', 'completed']}
+            statuses={['draft', 'published', 'upcoming', 'live', 'completed', 'archived']}
             q={q}
             status={status}
             dataset="events"
@@ -101,33 +105,41 @@ export default async function AdminSection({
             action="/api/admin/manage"
           >
             <input type="hidden" name="type" value="event" />
-            <input name="name" placeholder="Event name" required />
-            <input name="slug" placeholder="event-slug" required />
-            <input name="endDate" type="date" required />
+            {editingEvent && <input type="hidden" name="id" value={editingEvent.id} />}
+            <input name="name" defaultValue={editingEvent?.name} placeholder="Event name" required />
+            <input name="slug" defaultValue={editingEvent?.slug} placeholder="event-slug" required />
+            <input name="description" defaultValue={editingEvent?.description} placeholder="Public event description" />
+            <input name="startDate" type="date" defaultValue={inputDate(editingEvent?.startAt)} />
+            <input name="endDate" type="date" defaultValue={inputDate(editingEvent?.endAt)} required />
             <input
               name="price"
               type="number"
               min="0"
               step="0.01"
               placeholder="Vote price"
+              defaultValue={editingEvent?.votePrice}
               required
             />
-            <select name="status">
+            <select name="status" defaultValue={editingEvent?.status ?? 'draft'}>
               <option value="draft">Draft</option>
+              <option value="published">Published</option>
               <option value="upcoming">Upcoming</option>
-              <option value="live">Published / live</option>
-              <option value="closed">Completed</option>
+              <option value="live">Live</option>
+              <option value="completed">Completed</option>
+              <option value="archived">Archived</option>
             </select>
-            <button>Create event</button>
+            <button>{editingEvent ? 'Save event' : 'Create event'}</button>
           </form>
+          {saved === '1' && <p className="admin-success" role="status">Event changes saved.</p>}
           <AdminTable
-            headers={['Event', 'Status', 'Start', 'End', 'Price']}
+            headers={['Event', 'Status', 'Start', 'End', 'Price', 'Actions']}
             rows={filteredEvents.map((e) => [
               e.name,
               e.status,
               date(e.startAt),
               date(e.endAt),
               `${e.currency} ${e.votePrice}`,
+              <div className="admin-row-actions"><Link href={`/admin/events?edit=${e.id}`}>Edit</Link><form method="post" action="/api/admin/manage"><input type="hidden" name="type" value="event-status"/><input type="hidden" name="id" value={e.id}/><input type="hidden" name="status" value={e.status === 'live' ? 'draft' : 'live'}/><button>{e.status === 'live' ? 'Unpublish' : 'Publish live'}</button></form><form method="post" action="/api/admin/manage"><input type="hidden" name="type" value="event-status"/><input type="hidden" name="id" value={e.id}/><input type="hidden" name="status" value="archived"/><button>Archive</button></form></div>,
             ])}
           />
         </>
@@ -223,26 +235,7 @@ export default async function AdminSection({
       )}
       {section === 'payment-methods' && (
         <section className="method-overview">
-          {methods.map(([name, count]) => (
-            <article key={name}>
-              <span>{name}</span>
-              <strong>{count}</strong>
-              <small>
-                {Math.round((count / paymentRows.length) * 100) || 0}% of
-                transactions
-              </small>
-            </article>
-          ))}
-          <article className="provider-pending">
-            <span>EcoCash</span>
-            <strong>Pending</strong>
-            <small>Merchant credentials required</small>
-          </article>
-          <article className="provider-pending">
-            <span>InnBucks</span>
-            <strong>Pending</strong>
-            <small>Merchant credentials required</small>
-          </article>
+          {configuredMethods.map((method) => <article className={!method.configured ? 'provider-pending' : ''} key={method.id}><span>{method.name}</span><strong>{method.enabled && method.configured ? 'Enabled' : method.configured ? 'Disabled' : 'Not configured'}</strong><small>{methods.find(([name]) => name === method.code)?.[1] ?? 0} recorded transactions · secrets remain server-side</small></article>)}
         </section>
       )}
       {section === 'settings' && (
@@ -392,6 +385,9 @@ function date(value: Date | null) {
   return value
     ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(value)
     : '—';
+}
+function inputDate(value?: Date | null) {
+  return value ? value.toISOString().slice(0, 10) : undefined;
 }
 function AdminTable({
   headers,

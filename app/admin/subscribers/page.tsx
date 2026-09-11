@@ -1,12 +1,12 @@
 import { desc } from 'drizzle-orm';
 import { getDb } from '@/db';
 import { subscribers } from '@/db/schema';
-import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { requireChatGPTUser } from '@/app/chatgpt-auth';
 import { AdminShell } from '@/components/admin-shell';
 export const dynamic = 'force-dynamic';
 export default async function Subscribers() {
   const [user, rows] = await Promise.all([
-    getChatGPTUser(),
+    requireChatGPTUser('/admin/subscribers'),
     getDb().select().from(subscribers).orderBy(desc(subscribers.createdAt)),
   ]);
   return (

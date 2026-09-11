@@ -19,20 +19,27 @@ export async function POST(request: Request) {
   const db = getDb();
   let destination = '/admin';
   if (type === 'event') {
-    await db
-      .insert(events)
-      .values({
+    const id = Number(form.get('id') || 0);
+    const values = {
         name: String(form.get('name')),
         slug: String(form.get('slug')),
-        description: '',
+        description: String(form.get('description') || ''),
         status: String(form.get('status') || 'draft'),
+        startAt: form.get('startDate') ? new Date(String(form.get('startDate'))) : null,
         endAt: new Date(String(form.get('endDate'))),
         currency: 'USD',
         votePrice: Number(form.get('price')),
         publicLeaderboard: true,
-        createdAt: now,
-      });
-    destination = '/admin/events';
+      };
+    if (id) await db.update(events).set(values).where(eq(events.id, id));
+    else await db.insert(events).values({ ...values, createdAt: now });
+    destination = '/admin/events?saved=1';
+  } else if (type === 'event-status') {
+    const id = Number(form.get('id'));
+    const status = String(form.get('status'));
+    if (!['draft', 'published', 'upcoming', 'live', 'completed', 'archived'].includes(status)) return NextResponse.json({ message: 'Invalid event status' }, { status: 400 });
+    await db.update(events).set({ status }).where(eq(events.id, id));
+    destination = '/admin/events?saved=1';
   } else if (type === 'contestant') {
     const id = Number(form.get('id') || 0);
     const values = {

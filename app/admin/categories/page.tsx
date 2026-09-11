@@ -1,12 +1,14 @@
 import { AdminShell } from '@/components/admin-shell';
-import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { requireChatGPTUser } from '@/app/chatgpt-auth';
 import { getCategories } from '@/lib/application-store';
 export const dynamic = 'force-dynamic';
-export default async function Categories() {
+export default async function Categories({ searchParams }: { searchParams: Promise<{ edit?: string; saved?: string }> }) {
+  const query = await searchParams;
   const [user, categories] = await Promise.all([
-    getChatGPTUser(),
+    requireChatGPTUser('/admin/categories'),
     getCategories(true),
   ]);
+  const editing = categories.find((category) => String(category.id) === query.edit);
   return (
     <AdminShell user={user} active="categories">
       <header>
@@ -22,15 +24,16 @@ export default async function Categories() {
           action="/api/admin/categories"
           method="post"
         >
-          <input name="name" placeholder="Category name" required />
-          <input name="description" placeholder="Short description" />
+          {editing && <input type="hidden" name="id" value={editing.id} />}
+          <input name="name" defaultValue={editing?.name} placeholder="Category name" required />
+          <input name="description" defaultValue={editing?.description} placeholder="Short description" />
           <input
             name="displayOrder"
             type="number"
             min="0"
-            defaultValue={categories.length + 1}
+            defaultValue={editing?.displayOrder ?? categories.length + 1}
           />
-          <button>Add category</button>
+          <button>{editing ? 'Save category' : 'Add category'}</button>
         </form>
       ) : (
         <div className="admin-empty">
@@ -38,6 +41,7 @@ export default async function Categories() {
           <p>Sign in to create or change categories.</p>
         </div>
       )}
+      {query.saved === '1' && <p className="admin-success" role="status">Category changes saved.</p>}
       <div className="admin-table">
         <table>
           <thead>
@@ -68,13 +72,13 @@ export default async function Categories() {
                 </td>
                 <td>
                   {user && (
-                    <form action="/api/admin/categories" method="post">
+                    <div className="admin-row-actions"><a href={`/admin/categories?edit=${c.id}`}>Edit</a><form action="/api/admin/categories" method="post">
                       <input type="hidden" name="id" value={c.id} />
                       <input type="hidden" name="intent" value="toggle" />
                       <button className="table-action">
                         {c.active ? 'Deactivate' : 'Activate'}
                       </button>
-                    </form>
+                    </form></div>
                   )}
                 </td>
               </tr>

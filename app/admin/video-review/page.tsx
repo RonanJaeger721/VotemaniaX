@@ -1,10 +1,10 @@
 import { AdminShell } from '@/components/admin-shell';
-import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { requireChatGPTUser } from '@/app/chatgpt-auth';
 import { getReviewVideos } from '@/lib/application-store';
 export const dynamic = 'force-dynamic';
 export default async function Review() {
   const [user, videos] = await Promise.all([
-    getChatGPTUser(),
+    requireChatGPTUser('/admin/video-review'),
     getReviewVideos(),
   ]);
   return (

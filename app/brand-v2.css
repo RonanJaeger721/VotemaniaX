@@ -563,6 +563,10 @@ h1 em,
 .contact-help span, .contact-help a { color: #e9ad0b; }
 .contact-help h2 { margin: 32px 0 14px; }
 .contact-help p { color: var(--muted); line-height: 1.65; }
+.contact-form-section { display: grid; grid-template-columns: minmax(0, .8fr) minmax(320px, 1fr); gap: clamp(32px, 7vw, 96px); align-items: start; padding-block: clamp(56px, 8vw, 96px); }
+.contact-form-section h2 { margin: 12px 0 16px; font-size: clamp(1.8rem, 3vw, 3rem); }
+.contact-form-section > div > p:last-child { color: var(--muted); line-height: 1.65; max-width: 48ch; }
+.contact-form-section textarea { resize: vertical; min-height: 140px; }
 .admin-login { min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: #050505; color: white; }
 .admin-login-panel { width: min(100%, 520px); padding: clamp(28px, 6vw, 56px); border: 1px solid rgba(233,173,11,.35); background: #0a0a0a; }
 .admin-login-panel .brand { display: inline-flex; margin-bottom: 56px; }
@@ -585,6 +589,7 @@ h1 em,
 @media (max-width: 700px) {
   .how-guide article, .process-note { grid-template-columns: 1fr; }
   .contact-help { grid-template-columns: 1fr; }
+  .contact-form-section { grid-template-columns: 1fr; }
   .admin-login { padding: 14px; }
   .admin-login-panel .brand { margin-bottom: 40px; }
 }

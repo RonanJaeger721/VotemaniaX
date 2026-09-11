@@ -6,7 +6,7 @@ import {
   LockKeyhole,
   Users,
 } from 'lucide-react';
-import { chatGPTSignInPath, getChatGPTUser } from '@/app/chatgpt-auth';
+import { chatGPTSignInPath, requireChatGPTUser } from '@/app/chatgpt-auth';
 import { AdminShell } from '@/components/admin-shell';
 import {
   ensureSourceSnapshot,
@@ -25,7 +25,7 @@ export default async function Admin({
 }: {
   searchParams: Promise<{ range?: string }>;
 }) {
-  const user = await getChatGPTUser();
+  const user = await requireChatGPTUser('/admin');
   const { range = '30' } = await searchParams;
   const rangeDays = ['7', '30', '90'].includes(range) ? Number(range) : 30;
   await ensureSourceSnapshot();

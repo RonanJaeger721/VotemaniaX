@@ -29,6 +29,13 @@
       "when": 1789080000000,
       "tag": "0003_application_portals",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1789132472854,
+      "tag": "0005_contact_messages",
+      "breakpoints": true
     }
   ]
 }

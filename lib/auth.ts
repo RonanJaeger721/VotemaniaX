@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { and, eq, gt } from 'drizzle-orm';
 import { getDb } from '@/db';
 import { sessions, users } from '@/db/schema';
+import bcrypt from 'bcryptjs';
 
 const COOKIE = 'vmx_session';
 const encoder = new TextEncoder();
@@ -39,6 +40,7 @@ export async function hashPassword(
   return `${salt}:${hex(new Uint8Array(bits))}`;
 }
 export async function verifyPassword(password: string, stored: string) {
+  if (stored.startsWith('$2')) return bcrypt.compare(password, stored);
   const [salt] = stored.split(':');
   return (await hashPassword(password, salt)) === stored;
 }
@@ -55,7 +57,7 @@ export async function createSession(userId: number) {
     });
   (await cookies()).set(COOKIE, token, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
     expires: expiresAt,

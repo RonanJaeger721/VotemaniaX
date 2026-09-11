@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Copy, ExternalLink, LockKeyhole } from 'lucide-react';
-import { getChatGPTUser, chatGPTSignInPath } from '@/app/chatgpt-auth';
+import { chatGPTSignInPath, requireChatGPTUser } from '@/app/chatgpt-auth';
 import { AdminShell } from '@/components/admin-shell';
 import {
   getCurrentRound,
@@ -9,7 +9,7 @@ import {
 } from '@/lib/platform-store';
 export const dynamic = 'force-dynamic';
 export default async function VotingRounds() {
-  const user = await getChatGPTUser();
+  const user = await requireChatGPTUser('/admin/voting-rounds');
   const rounds = await getRounds();
   const current = await getCurrentRound();
   const rows = await Promise.all(

@@ -1,7 +1,14 @@
 import { Mail, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
-export default function Contact() {
+import { getDb } from '@/db';
+import { siteSettings } from '@/db/schema';
+export const dynamic = 'force-dynamic';
+export default async function Contact({ searchParams }: { searchParams: Promise<{ sent?: string; error?: string }> }) {
+  const [settings, query] = await Promise.all([getDb().select().from(siteSettings), searchParams]);
+  const supportEmail = settings.find((s) => s.key === 'support_email')?.value || 'thevibehub26@gmail.com';
+  const supportPhone = settings.find((s) => s.key === 'support_phone')?.value || '+263 719 308 153';
+  const telephone = supportPhone.replaceAll(/[^+\d]/g, '');
   return (
     <main className="site-shell">
       <PublicHeader />
@@ -18,16 +25,28 @@ export default function Contact() {
         </p>
       </section>
       <section className="contact-panel">
-        <a href="mailto:thevibehub26@gmail.com">
+        <a href={`mailto:${supportEmail}`}>
           <Mail />
           <small>EMAIL SUPPORT</small>
-          <strong>thevibehub26@gmail.com</strong>
+          <strong>{supportEmail}</strong>
         </a>
-        <a href="tel:+263719308153">
+        <a href={`tel:${telephone}`}>
           <Phone />
           <small>CALL SUPPORT</small>
-          <strong>+263 719 308 153</strong>
+          <strong>{supportPhone}</strong>
         </a>
+      </section>
+      <section className="contact-form-section">
+        <div><p className="eyebrow">SEND A MESSAGE</p><h2>Tell us what you need help with.</h2><p>Messages are stored securely for the VoteManiaX support team. Never include a password, PIN or one-time code.</p></div>
+        <form className="settings-form" action="/api/contact" method="post">
+          {query.sent === '1' && <p className="admin-success" role="status">Your message has been received.</p>}
+          {query.error && <p className="form-error" role="alert">Complete every field with a valid email and enough detail.</p>}
+          <label>Name<input name="name" required minLength={2} /></label>
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Subject<input name="subject" required minLength={3} /></label>
+          <label>Message<textarea name="message" required minLength={10} rows={6} /></label>
+          <button>Send message</button>
+        </form>
       </section>
       <section className="contact-help">
         <article><span>01</span><h2>Payment support</h2><p>Include your payment reference, payment method, contestant and voting round so the team can trace the correct record. Never send a password or one-time PIN.</p></article>

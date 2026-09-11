@@ -37,26 +37,18 @@ export async function POST(request: Request) {
       });
   } else {
     const name = String(data.get('name') ?? '').trim();
-    if (name)
-      await db
-        .insert(categories)
-        .values({
-          name,
-          slug: slug(name),
-          description: String(data.get('description') ?? ''),
-          displayOrder: Number(data.get('displayOrder')) || 0,
-          active: true,
-          createdAt: new Date(),
-        });
+    const values = { name, slug: slug(name), description: String(data.get('description') ?? ''), displayOrder: Number(data.get('displayOrder')) || 0 };
+    if (name && id) await db.update(categories).set(values).where(eq(categories.id, id));
+    else if (name) await db.insert(categories).values({ ...values, active: true, createdAt: new Date() });
     await db
       .insert(auditLogs)
       .values({
         adminUserId: user.userId,
-        action: 'category.create',
+        action: id ? 'category.update' : 'category.create',
         entityType: 'category',
         payload: JSON.stringify({ name }),
         createdAt: new Date(),
       });
   }
-  return NextResponse.redirect(new URL('/admin/categories', request.url), 303);
+  return NextResponse.redirect(new URL('/admin/categories?saved=1', request.url), 303);
 }
