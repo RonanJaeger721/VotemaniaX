@@ -1,2 +1,47 @@
-import {notFound} from 'next/navigation';import {PublicFooter,PublicHeader} from '@/components/public-shell';import {getRoundBySlug,getRoundContestants} from '@/lib/platform-store';
-export const dynamic='force-dynamic';export default async function Result({params}:{params:Promise<{roundSlug:string}>}){const {roundSlug}=await params;const round=await getRoundBySlug(roundSlug);if(!round)notFound();const people=await getRoundContestants(round.id);return <main className="site-shell"><PublicHeader/><section className="page-intro"><p className="eyebrow">WEEK {String(round.weekNumber).padStart(2,'0')} · OFFICIAL RECORD</p><h1>{round.name}<br/><em>results.</em></h1><p>{round.startAt.toLocaleDateString('en-GB')} — {round.endAt.toLocaleDateString('en-GB')} · {people.reduce((s,p)=>s+p.votes,0)} verified votes</p></section><section className="round-leaderboard">{people.map((p,i)=><article className={i===0?'winner':''} key={p.id}><span>{String(i+1).padStart(2,'0')}</span><div><b>{p.name}</b><small>{p.category}</small></div><strong>{p.votes} votes</strong></article>)}</section><PublicFooter/></main>}
+import { notFound } from 'next/navigation';
+import { PublicFooter, PublicHeader } from '@/components/public-shell';
+import { getRoundBySlug, getRoundContestants } from '@/lib/platform-store';
+export const dynamic = 'force-dynamic';
+export default async function Result({
+  params,
+}: {
+  params: Promise<{ roundSlug: string }>;
+}) {
+  const { roundSlug } = await params;
+  const round = await getRoundBySlug(roundSlug);
+  if (!round) notFound();
+  const people = await getRoundContestants(round.id);
+  return (
+    <main className="site-shell">
+      <PublicHeader />
+      <section className="page-intro">
+        <p className="eyebrow">
+          WEEK {String(round.weekNumber).padStart(2, '0')} · OFFICIAL RECORD
+        </p>
+        <h1>
+          {round.name}
+          <br />
+          <em>results.</em>
+        </h1>
+        <p>
+          {round.startAt.toLocaleDateString('en-GB')} —{' '}
+          {round.endAt.toLocaleDateString('en-GB')} ·{' '}
+          {people.reduce((s, p) => s + p.votes, 0)} verified votes
+        </p>
+      </section>
+      <section className="round-leaderboard">
+        {people.map((p, i) => (
+          <article className={i === 0 ? 'winner' : ''} key={p.id}>
+            <span>{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <b>{p.name}</b>
+              <small>{p.category}</small>
+            </div>
+            <strong>{p.votes} votes</strong>
+          </article>
+        ))}
+      </section>
+      <PublicFooter />
+    </main>
+  );
+}

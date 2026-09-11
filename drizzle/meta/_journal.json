@@ -22,6 +22,13 @@
       "when": 1788984000000,
       "tag": "0002_voting_rounds",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789080000000,
+      "tag": "0003_application_portals",
+      "breakpoints": true
     }
   ]
 }

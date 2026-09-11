@@ -1,2 +1,32 @@
-import { PublicFooter,PublicHeader } from '@/components/public-shell'; import { getActiveFaqs } from '@/lib/platform-store';
-export const dynamic='force-dynamic'; export default async function FAQ(){const faqs=await getActiveFaqs();return <main className="site-shell"><PublicHeader/><section className="page-intro"><p className="eyebrow">VOTING, EXPLAINED</p><h1>Good questions.<br/><em>Clear answers.</em></h1></section><section className="faq-list">{faqs.map((f,i)=><details key={f.id} open={i===0}><summary><span>0{i+1}</span>{f.question}<b>+</b></summary><p>{f.answer}</p></details>)}</section><PublicFooter/></main>}
+import { PublicFooter, PublicHeader } from '@/components/public-shell';
+import { getActiveFaqs } from '@/lib/platform-store';
+export const dynamic = 'force-dynamic';
+export default async function FAQ() {
+  const faqs = await getActiveFaqs();
+  return (
+    <main className="site-shell">
+      <PublicHeader />
+      <section className="page-intro">
+        <p className="eyebrow">VOTING, EXPLAINED</p>
+        <h1>
+          Good questions.
+          <br />
+          <em>Clear answers.</em>
+        </h1>
+      </section>
+      <section className="faq-list">
+        {faqs.map((f, i) => (
+          <details key={f.id} open={i === 0}>
+            <summary>
+              <span>0{i + 1}</span>
+              {f.question}
+              <b>+</b>
+            </summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </section>
+      <PublicFooter />
+    </main>
+  );
+}

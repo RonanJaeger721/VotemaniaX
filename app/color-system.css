@@ -12,21 +12,21 @@
 .brand-mark {
   background: var(--brand-violet);
   border-color: color-mix(in srgb, var(--brand-magenta) 72%, white);
-  box-shadow: 0 0 28px rgba(117, 70, 255, .42);
+  box-shadow: 0 0 28px rgba(117, 70, 255, 0.42);
 }
 
 .nav-cta,
 .primary-action,
 .newsletter-form button {
   background: var(--brand-violet);
-  box-shadow: 0 10px 35px rgba(117, 70, 255, .28);
+  box-shadow: 0 10px 35px rgba(117, 70, 255, 0.28);
 }
 
 .nav-cta:hover,
 .primary-action:hover,
 .newsletter-form button:hover {
   background: var(--brand-magenta);
-  box-shadow: 0 12px 38px rgba(236, 63, 145, .25);
+  box-shadow: 0 12px 38px rgba(236, 63, 145, 0.25);
 }
 
 .signal-line span,
@@ -49,7 +49,7 @@
 }
 
 .leader-row:hover {
-  background: rgba(117, 70, 255, .08);
+  background: rgba(117, 70, 255, 0.08);
 }
 
 .contestant-visual,
@@ -82,12 +82,12 @@
 
 .event-art {
   background: #21153f;
-  box-shadow: inset -32px 0 90px rgba(10, 9, 17, .46);
+  box-shadow: inset -32px 0 90px rgba(10, 9, 17, 0.46);
 }
 
 .admin-shell aside nav button.active,
 .admin-shell aside nav a.active {
-  background: rgba(117, 70, 255, .18);
+  background: rgba(117, 70, 255, 0.18);
   box-shadow: inset 3px 0 0 var(--brand-violet);
 }
 
@@ -107,14 +107,26 @@
 /* Gradients are reserved for wide atmospheric fields, never key controls. */
 .site-shell {
   background:
-    radial-gradient(circle at 72% 14%, rgba(117, 70, 255, .18), transparent 27rem),
-    radial-gradient(circle at 90% 38%, rgba(236, 63, 145, .09), transparent 29rem),
+    radial-gradient(
+      circle at 72% 14%,
+      rgba(117, 70, 255, 0.18),
+      transparent 27rem
+    ),
+    radial-gradient(
+      circle at 90% 38%,
+      rgba(236, 63, 145, 0.09),
+      transparent 29rem
+    ),
     var(--surface-base);
 }
 
 .newsletter-section {
   background:
-    radial-gradient(circle at 8% 100%, rgba(117, 70, 255, .17), transparent 40%),
+    radial-gradient(
+      circle at 8% 100%,
+      rgba(117, 70, 255, 0.17),
+      transparent 40%
+    ),
     var(--surface-card);
 }
 
@@ -130,8 +142,130 @@
   }
 }
 
-.health-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background:var(--brand-lime);box-shadow:0 0 14px rgba(199,255,66,.7);animation:health-pulse 2.2s ease-in-out infinite}.admin-access-banner{margin:28px 0 0;padding:18px 20px;border:1px solid rgba(199,255,66,.22);border-radius:18px;background:rgba(199,255,66,.055);display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center}.admin-access-banner>svg{color:var(--brand-lime)}.admin-access-banner div{display:flex;flex-direction:column;gap:4px}.admin-access-banner span{color:#8f899b;font-size:12px}.admin-access-banner a,.panel-title>a{border:1px solid var(--line);border-radius:99px;padding:10px 14px;color:white;font-size:11px}.admin-range{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:22px 0 -24px}.admin-range>span{margin-right:5px;color:#766f80;font-size:10px;text-transform:uppercase;letter-spacing:.1em}.admin-range a{padding:8px 12px;border:1px solid var(--line);border-radius:99px;color:#8f8798;font-size:10px}.admin-range a.active{background:var(--brand-violet);border-color:var(--brand-violet);color:white}.chart-caption{display:flex;justify-content:space-between;color:#777080;font-size:10px}.chart-caption b{color:#b8b0c1}.mini-rank{color:inherit}.spark-bars i{transform-origin:bottom;animation:bar-rise .55s cubic-bezier(.2,.8,.2,1) both}.admin-guest>span{font-size:10px;font-weight:800}.panel-title>a:hover,.admin-access-banner a:hover{background:var(--brand-violet);border-color:var(--brand-violet)}
+.health-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background: var(--brand-lime);
+  box-shadow: 0 0 14px rgba(199, 255, 66, 0.7);
+  animation: health-pulse 2.2s ease-in-out infinite;
+}
+.admin-access-banner {
+  margin: 28px 0 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(199, 255, 66, 0.22);
+  border-radius: 18px;
+  background: rgba(199, 255, 66, 0.055);
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+.admin-access-banner > svg {
+  color: var(--brand-lime);
+}
+.admin-access-banner div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.admin-access-banner span {
+  color: #8f899b;
+  font-size: 12px;
+}
+.admin-access-banner a,
+.panel-title > a {
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 10px 14px;
+  color: white;
+  font-size: 11px;
+}
+.admin-range {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  margin: 22px 0 -24px;
+}
+.admin-range > span {
+  margin-right: 5px;
+  color: #766f80;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.admin-range a {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  color: #8f8798;
+  font-size: 10px;
+}
+.admin-range a.active {
+  background: var(--brand-violet);
+  border-color: var(--brand-violet);
+  color: white;
+}
+.chart-caption {
+  display: flex;
+  justify-content: space-between;
+  color: #777080;
+  font-size: 10px;
+}
+.chart-caption b {
+  color: #b8b0c1;
+}
+.mini-rank {
+  color: inherit;
+}
+.spark-bars i {
+  transform-origin: bottom;
+  animation: bar-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.admin-guest > span {
+  font-size: 10px;
+  font-weight: 800;
+}
+.panel-title > a:hover,
+.admin-access-banner a:hover {
+  background: var(--brand-violet);
+  border-color: var(--brand-violet);
+}
 
-@keyframes bar-rise{from{transform:scaleY(.08);opacity:.15}to{transform:scaleY(1);opacity:.8}}@keyframes health-pulse{50%{opacity:.45;transform:scale(.82)}}
+@keyframes bar-rise {
+  from {
+    transform: scaleY(0.08);
+    opacity: 0.15;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 0.8;
+  }
+}
+@keyframes health-pulse {
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
 
-@media(max-width:700px){.admin-access-banner{grid-template-columns:30px 1fr}.admin-access-banner a{grid-column:1/-1;text-align:center}.admin-range{justify-content:flex-start;overflow:auto;margin-bottom:-20px}.admin-range>span{display:none}}
+@media (max-width: 700px) {
+  .admin-access-banner {
+    grid-template-columns: 30px 1fr;
+  }
+  .admin-access-banner a {
+    grid-column: 1/-1;
+    text-align: center;
+  }
+  .admin-range {
+    justify-content: flex-start;
+    overflow: auto;
+    margin-bottom: -20px;
+  }
+  .admin-range > span {
+    display: none;
+  }
+}

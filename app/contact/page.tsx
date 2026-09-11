@@ -1,2 +1,34 @@
-import { Mail,Phone } from 'lucide-react'; import { PublicFooter,PublicHeader } from '@/components/public-shell';
-export default function Contact(){return <main className="site-shell"><PublicHeader/><section className="page-intro"><p className="eyebrow">CONTACT & SUPPORT</p><h1>Keep the signal<br/><em>moving.</em></h1><p>Questions about an event, contestant or payment status? Reach the VoteManiaX team through the active platform contacts.</p></section><section className="contact-panel"><a href="mailto:thevibehub26@gmail.com"><Mail/><small>EMAIL SUPPORT</small><strong>thevibehub26@gmail.com</strong></a><a href="tel:+263719308153"><Phone/><small>CALL SUPPORT</small><strong>+263 719 308 153</strong></a></section><PublicFooter/></main>}
+import { Mail, Phone } from 'lucide-react';
+import { PublicFooter, PublicHeader } from '@/components/public-shell';
+export default function Contact() {
+  return (
+    <main className="site-shell">
+      <PublicHeader />
+      <section className="page-intro">
+        <p className="eyebrow">CONTACT & SUPPORT</p>
+        <h1>
+          Keep the signal
+          <br />
+          <em>moving.</em>
+        </h1>
+        <p>
+          Questions about an event, contestant or payment status? Reach the
+          VoteManiaX team through the active platform contacts.
+        </p>
+      </section>
+      <section className="contact-panel">
+        <a href="mailto:thevibehub26@gmail.com">
+          <Mail />
+          <small>EMAIL SUPPORT</small>
+          <strong>thevibehub26@gmail.com</strong>
+        </a>
+        <a href="tel:+263719308153">
+          <Phone />
+          <small>CALL SUPPORT</small>
+          <strong>+263 719 308 153</strong>
+        </a>
+      </section>
+      <PublicFooter />
+    </main>
+  );
+}

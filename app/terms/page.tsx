@@ -1,1 +1,18 @@
-import { PublicFooter,PublicHeader } from '@/components/public-shell'; export default function Terms(){return <main className="site-shell"><PublicHeader/><article className="legal"><p className="eyebrow">LEGAL</p><h1>Terms of service</h1><p>The definitive VoteManiaX terms must be supplied and approved by the platform operator before launch. Voting and payment terms must match the connected provider and applicable jurisdiction.</p></article><PublicFooter/></main>}
+import { PublicFooter, PublicHeader } from '@/components/public-shell';
+export default function Terms() {
+  return (
+    <main className="site-shell">
+      <PublicHeader />
+      <article className="legal">
+        <p className="eyebrow">LEGAL</p>
+        <h1>Terms of service</h1>
+        <p>
+          The definitive VoteManiaX terms must be supplied and approved by the
+          platform operator before launch. Voting and payment terms must match
+          the connected provider and applicable jurisdiction.
+        </p>
+      </article>
+      <PublicFooter />
+    </main>
+  );
+}

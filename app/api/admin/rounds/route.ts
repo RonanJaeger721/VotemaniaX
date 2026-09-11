@@ -1,2 +1,71 @@
-import {NextResponse} from 'next/server';import {getChatGPTUser} from '@/app/chatgpt-auth';import {getDb} from '@/db';import {auditLogs,events,votingRounds} from '@/db/schema';import {desc} from 'drizzle-orm';
-export async function POST(request:Request){const user=await getChatGPTUser();if(!user)return NextResponse.json({message:'Unauthorized'},{status:401});const form=await request.formData();if(form.get('action')!=='create-next')return NextResponse.json({message:'Unsupported action'},{status:400});const db=getDb();const latest=(await db.select().from(votingRounds).orderBy(desc(votingRounds.weekNumber)).limit(1))[0];const event=(await db.select().from(events).orderBy(desc(events.createdAt)).limit(1))[0];if(!event)return NextResponse.json({message:'Create an event first'},{status:409});const week=(latest?.weekNumber??0)+1,now=new Date(),end=new Date(now.getTime()+7*86400000),token=crypto.randomUUID().replaceAll('-','').slice(0,6),slug=`${event.slug}-week-${String(week).padStart(2,'0')}-${token}`;const [round]=await db.insert(votingRounds).values({eventId:event.id,name:`Voting Week ${String(week).padStart(2,'0')}`,weekNumber:week,slug,publicToken:token,startAt:now,endAt:end,status:'live',createdBy:user.userId,createdAt:now,publishedAt:now}).returning();await db.insert(auditLogs).values({adminUserId:user.userId,action:'create_voting_round',entityType:'voting_round',entityId:String(round.id),payload:JSON.stringify({slug,startAt:now.toISOString(),endAt:end.toISOString()}),createdAt:now});return NextResponse.redirect(new URL('/admin/voting-rounds',request.url),303)}
+import { NextResponse } from 'next/server';
+import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { getDb } from '@/db';
+import { auditLogs, events, votingRounds } from '@/db/schema';
+import { desc } from 'drizzle-orm';
+export async function POST(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user)
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const form = await request.formData();
+  if (form.get('action') !== 'create-next')
+    return NextResponse.json(
+      { message: 'Unsupported action' },
+      { status: 400 },
+    );
+  const db = getDb();
+  const latest = (
+    await db
+      .select()
+      .from(votingRounds)
+      .orderBy(desc(votingRounds.weekNumber))
+      .limit(1)
+  )[0];
+  const event = (
+    await db.select().from(events).orderBy(desc(events.createdAt)).limit(1)
+  )[0];
+  if (!event)
+    return NextResponse.json(
+      { message: 'Create an event first' },
+      { status: 409 },
+    );
+  const week = (latest?.weekNumber ?? 0) + 1,
+    now = new Date(),
+    end = new Date(now.getTime() + 7 * 86400000),
+    token = crypto.randomUUID().replaceAll('-', '').slice(0, 6),
+    slug = `${event.slug}-week-${String(week).padStart(2, '0')}-${token}`;
+  const [round] = await db
+    .insert(votingRounds)
+    .values({
+      eventId: event.id,
+      name: `Voting Week ${String(week).padStart(2, '0')}`,
+      weekNumber: week,
+      slug,
+      publicToken: token,
+      startAt: now,
+      endAt: end,
+      status: 'live',
+      createdBy: user.userId,
+      createdAt: now,
+      publishedAt: now,
+    })
+    .returning();
+  await db
+    .insert(auditLogs)
+    .values({
+      adminUserId: user.userId,
+      action: 'create_voting_round',
+      entityType: 'voting_round',
+      entityId: String(round.id),
+      payload: JSON.stringify({
+        slug,
+        startAt: now.toISOString(),
+        endAt: end.toISOString(),
+      }),
+      createdAt: now,
+    });
+  return NextResponse.redirect(
+    new URL('/admin/voting-rounds', request.url),
+    303,
+  );
+}

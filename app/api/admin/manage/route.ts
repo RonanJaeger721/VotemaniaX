@@ -1,2 +1,99 @@
-import { NextResponse } from 'next/server'; import { getChatGPTUser } from '@/app/chatgpt-auth'; import { getDb } from '@/db'; import { auditLogs,contestants,events,faqs,siteSettings } from '@/db/schema';
-export async function POST(request:Request){const user=await getChatGPTUser();if(!user)return NextResponse.json({message:'Unauthorized'},{status:401});const form=await request.formData();const type=String(form.get('type')||'');const now=new Date();const db=getDb();let destination='/admin';if(type==='event'){await db.insert(events).values({name:String(form.get('name')),slug:String(form.get('slug')),description:'',status:String(form.get('status')||'draft'),endAt:new Date(String(form.get('endDate'))),currency:'USD',votePrice:Number(form.get('price')),publicLeaderboard:true,createdAt:now});destination='/admin/events'}else if(type==='contestant'){await db.insert(contestants).values({eventId:Number(form.get('eventId')),name:String(form.get('name')),slug:String(form.get('slug')),category:String(form.get('category')),bio:'',status:'approved',createdAt:now});destination='/admin/participants'}else if(type==='faq'){await db.insert(faqs).values({question:String(form.get('question')),answer:String(form.get('answer')),active:true,displayOrder:Date.now(),createdAt:now});destination='/admin/faqs'}else if(type==='settings-bundle'){for(const key of ['company_name','support_email','timezone']){const value=String(form.get(key)||'');await db.insert(siteSettings).values({key,value,updatedAt:now}).onConflictDoUpdate({target:siteSettings.key,set:{value,updatedAt:now}})}destination='/admin/settings'}else if(type==='setting'){await db.insert(siteSettings).values({key:String(form.get('key')),value:String(form.get('value')),updatedAt:now}).onConflictDoUpdate({target:siteSettings.key,set:{value:String(form.get('value')),updatedAt:now}});destination='/admin/settings'}else return NextResponse.json({message:'Unsupported operation'},{status:400});await db.insert(auditLogs).values({adminUserId:user.userId,action:`create_${type}`,entityType:type,payload:JSON.stringify(Object.fromEntries(form)),createdAt:now});return NextResponse.redirect(new URL(destination,request.url),303)}
+import { NextResponse } from 'next/server';
+import { getChatGPTUser } from '@/app/chatgpt-auth';
+import { getDb } from '@/db';
+import {
+  auditLogs,
+  contestants,
+  events,
+  faqs,
+  siteSettings,
+} from '@/db/schema';
+export async function POST(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user)
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const form = await request.formData();
+  const type = String(form.get('type') || '');
+  const now = new Date();
+  const db = getDb();
+  let destination = '/admin';
+  if (type === 'event') {
+    await db
+      .insert(events)
+      .values({
+        name: String(form.get('name')),
+        slug: String(form.get('slug')),
+        description: '',
+        status: String(form.get('status') || 'draft'),
+        endAt: new Date(String(form.get('endDate'))),
+        currency: 'USD',
+        votePrice: Number(form.get('price')),
+        publicLeaderboard: true,
+        createdAt: now,
+      });
+    destination = '/admin/events';
+  } else if (type === 'contestant') {
+    await db
+      .insert(contestants)
+      .values({
+        eventId: Number(form.get('eventId')),
+        name: String(form.get('name')),
+        slug: String(form.get('slug')),
+        category: String(form.get('category')),
+        bio: '',
+        status: 'approved',
+        createdAt: now,
+      });
+    destination = '/admin/participants';
+  } else if (type === 'faq') {
+    await db
+      .insert(faqs)
+      .values({
+        question: String(form.get('question')),
+        answer: String(form.get('answer')),
+        active: true,
+        displayOrder: Date.now(),
+        createdAt: now,
+      });
+    destination = '/admin/faqs';
+  } else if (type === 'settings-bundle') {
+    for (const key of ['company_name', 'support_email', 'timezone']) {
+      const value = String(form.get(key) || '');
+      await db
+        .insert(siteSettings)
+        .values({ key, value, updatedAt: now })
+        .onConflictDoUpdate({
+          target: siteSettings.key,
+          set: { value, updatedAt: now },
+        });
+    }
+    destination = '/admin/settings';
+  } else if (type === 'setting') {
+    await db
+      .insert(siteSettings)
+      .values({
+        key: String(form.get('key')),
+        value: String(form.get('value')),
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: siteSettings.key,
+        set: { value: String(form.get('value')), updatedAt: now },
+      });
+    destination = '/admin/settings';
+  } else
+    return NextResponse.json(
+      { message: 'Unsupported operation' },
+      { status: 400 },
+    );
+  await db
+    .insert(auditLogs)
+    .values({
+      adminUserId: user.userId,
+      action: `create_${type}`,
+      entityType: type,
+      payload: JSON.stringify(Object.fromEntries(form)),
+      createdAt: now,
+    });
+  return NextResponse.redirect(new URL(destination, request.url), 303);
+}

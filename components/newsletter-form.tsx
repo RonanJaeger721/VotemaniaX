@@ -1,9 +1,91 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-async function subscribe(email:string){const response=await fetch('/api/newsletter',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email})});const result=await response.json() as {ok?:boolean;message?:string};if(!response.ok)throw new Error(result.message||'Unable to subscribe');return result}
+async function subscribe(email: string) {
+  const response = await fetch('/api/newsletter', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const result = (await response.json()) as { ok?: boolean; message?: string };
+  if (!response.ok) throw new Error(result.message || 'Unable to subscribe');
+  return result;
+}
 
-export function NewsletterForm(){const [email,setEmail]=useState('');const [message,setMessage]=useState('');
-  useEffect(()=>{const context=(document as Document & {modelContext?:{registerTool:(tool:unknown,options?:{signal?:AbortSignal})=>void|Promise<void>}}).modelContext;if(!context?.registerTool)return;const lifecycle=new AbortController();void Promise.resolve(context.registerTool({name:'subscribe_to_votemania_updates',title:'Subscribe to VoteManiaX updates',description:'Subscribe an email address to VoteManiaX event and voting updates.',inputSchema:{type:'object',properties:{email:{type:'string',format:'email'}},required:['email'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async(input:unknown)=>{if(!input||typeof input!=='object'||!('email' in input)||typeof input.email!=='string')throw new Error('A valid email is required');const result=await subscribe(input.email);setEmail(input.email);setMessage(result.message||'You’re on the list.');return result}},{signal:lifecycle.signal})).catch(()=>{});return()=>lifecycle.abort()},[]);
-  async function submit(e:React.FormEvent){e.preventDefault();setMessage('Joining…');try{const result=await subscribe(email);setMessage(result.message||'You’re on the list.');setEmail('')}catch(error){setMessage(error instanceof Error?error.message:'Unable to subscribe') }}
-  return <form className="newsletter-form" onSubmit={submit}><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email address" aria-label="Email address" required/><button type="submit">Join the list</button><output aria-live="polite">{message}</output></form>}
+export function NewsletterForm() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  useEffect(() => {
+    const context = (
+      document as Document & {
+        modelContext?: {
+          registerTool: (
+            tool: unknown,
+            options?: { signal?: AbortSignal },
+          ) => void | Promise<void>;
+        };
+      }
+    ).modelContext;
+    if (!context?.registerTool) return;
+    const lifecycle = new AbortController();
+    void Promise.resolve(
+      context.registerTool(
+        {
+          name: 'subscribe_to_votemania_updates',
+          title: 'Subscribe to VoteManiaX updates',
+          description:
+            'Subscribe an email address to VoteManiaX event and voting updates.',
+          inputSchema: {
+            type: 'object',
+            properties: { email: { type: 'string', format: 'email' } },
+            required: ['email'],
+            additionalProperties: false,
+          },
+          annotations: { readOnlyHint: false, untrustedContentHint: false },
+          execute: async (input: unknown) => {
+            if (
+              !input ||
+              typeof input !== 'object' ||
+              !('email' in input) ||
+              typeof input.email !== 'string'
+            )
+              throw new Error('A valid email is required');
+            const result = await subscribe(input.email);
+            setEmail(input.email);
+            setMessage(result.message || 'You’re on the list.');
+            return result;
+          },
+        },
+        { signal: lifecycle.signal },
+      ),
+    ).catch(() => {});
+    return () => lifecycle.abort();
+  }, []);
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setMessage('Joining…');
+    try {
+      const result = await subscribe(email);
+      setMessage(result.message || 'You’re on the list.');
+      setEmail('');
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : 'Unable to subscribe',
+      );
+    }
+  }
+  return (
+    <form className="newsletter-form" onSubmit={submit}>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email address"
+        aria-label="Email address"
+        required
+      />
+      <button type="submit">Join the list</button>
+      <output aria-live="polite">{message}</output>
+    </form>
+  );
+}

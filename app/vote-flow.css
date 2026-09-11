@@ -1,1 +1,34 @@
-.payment-methods{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:9px}.payment-methods>small{grid-column:1/-1;color:#80778a}.payment-methods label input{display:none}.payment-methods label>span{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;padding:13px;cursor:pointer}.payment-methods label input:checked+span{border-color:#8065ff;background:#6d4cff18}.payment-methods label small{color:#766e80;margin-top:4px}@media(max-width:600px){.payment-methods{grid-template-columns:1fr}}
+.payment-methods {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.payment-methods > small {
+  grid-column: 1/-1;
+  color: #80778a;
+}
+.payment-methods label input {
+  display: none;
+}
+.payment-methods label > span {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 13px;
+  cursor: pointer;
+}
+.payment-methods label input:checked + span {
+  border-color: #8065ff;
+  background: #6d4cff18;
+}
+.payment-methods label small {
+  color: #766e80;
+  margin-top: 4px;
+}
+@media (max-width: 600px) {
+  .payment-methods {
+    grid-template-columns: 1fr;
+  }
+}

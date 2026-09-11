@@ -1,1 +1,107 @@
-:root{--motion-fast:160ms;--motion-base:240ms;--focus:#c7ff42}button,a,summary,label,select{touch-action:manipulation}button,summary,label,select{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.46}a,button,summary,input,select,textarea{transition:color var(--motion-fast) ease,background-color var(--motion-fast) ease,border-color var(--motion-fast) ease,opacity var(--motion-fast) ease,box-shadow var(--motion-fast) ease,transform var(--motion-fast) ease}a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--focus);outline-offset:3px}.primary-action:active,.nav-cta:active,.mobile-bottom a:active,.share-button:active{transform:scale(.97)}.mobile-bottom{padding-bottom:env(safe-area-inset-bottom);height:calc(66px + env(safe-area-inset-bottom))}.site-shell{padding-bottom:env(safe-area-inset-bottom)}.admin-table td,.admin-stats strong,.vote-count,.checkout-total strong{font-variant-numeric:tabular-nums}.drawer-panel{max-height:calc(100dvh - 100px);overflow:auto}.contestant-card,.admin-panel,.contact-panel a{content-visibility:auto;contain-intrinsic-size:1px 420px}@media(max-width:600px){input,select,textarea{font-size:16px!important}.mobile-bottom a{min-width:44px;min-height:44px}.drawer-panel a,.menu-drawer summary,.share-button,.text-action{min-height:44px}.site-shell{overflow-x:clip}.public-footer{padding-bottom:calc(35px + env(safe-area-inset-bottom))}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+:root {
+  --motion-fast: 160ms;
+  --motion-base: 240ms;
+  --focus: #c7ff42;
+}
+button,
+a,
+summary,
+label,
+select {
+  touch-action: manipulation;
+}
+button,
+summary,
+label,
+select {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+a,
+button,
+summary,
+input,
+select,
+textarea {
+  transition:
+    color var(--motion-fast) ease,
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    opacity var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+}
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.primary-action:active,
+.nav-cta:active,
+.mobile-bottom a:active,
+.share-button:active {
+  transform: scale(0.97);
+}
+.mobile-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(66px + env(safe-area-inset-bottom));
+}
+.site-shell {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.admin-table td,
+.admin-stats strong,
+.vote-count,
+.checkout-total strong {
+  font-variant-numeric: tabular-nums;
+}
+.drawer-panel {
+  max-height: calc(100dvh - 100px);
+  overflow: auto;
+}
+.contestant-card,
+.admin-panel,
+.contact-panel a {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 420px;
+}
+@media (max-width: 600px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+  .mobile-bottom a {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .drawer-panel a,
+  .menu-drawer summary,
+  .share-button,
+  .text-action {
+    min-height: 44px;
+  }
+  .site-shell {
+    overflow-x: clip;
+  }
+  .public-footer {
+    padding-bottom: calc(35px + env(safe-area-inset-bottom));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
