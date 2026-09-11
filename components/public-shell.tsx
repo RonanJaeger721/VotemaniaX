@@ -9,7 +9,6 @@ import {
   Users2,
   Vote,
 } from 'lucide-react';
-import { getCurrentRound } from '@/lib/platform-store';
 
 const links = [
   ['Discover', '/discover'],
@@ -33,8 +32,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
   );
 }
 export async function PublicHeader() {
-  const round = await getCurrentRound();
-  const voteHref = round ? `/vote/${round.slug}` : '/events';
+  const voteHref = '/vote';
   return (
     <>
       <nav className="topbar" aria-label="Primary navigation">

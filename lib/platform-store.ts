@@ -111,7 +111,7 @@ export async function ensureSourceSnapshot() {
     },
   ]);
 }
-export async function getPublicContestants() {
+export async function getPublicContestants(eventId?: number) {
   await ensureSourceSnapshot();
   return getDb()
     .select({
@@ -120,12 +120,13 @@ export async function getPublicContestants() {
       name: contestantTable.name,
       category: contestantTable.category,
       bio: contestantTable.bio,
+      imageKey: contestantTable.imageKey,
       status: contestantTable.status,
       votes: sql<number>`coalesce(sum(${votes.quantity}),0)`,
     })
     .from(contestantTable)
     .leftJoin(votes, eq(contestantTable.id, votes.contestantId))
-    .where(eq(contestantTable.status, 'approved'))
+    .where(eventId ? sql`${contestantTable.status}='approved' and ${contestantTable.eventId}=${eventId}` : eq(contestantTable.status, 'approved'))
     .groupBy(contestantTable.id)
     .orderBy(desc(sql`coalesce(sum(${votes.quantity}),0)`));
 }
@@ -229,6 +230,10 @@ async function closeExpiredRound<
 }
 export async function getCurrentRound() {
   return ensureVotingRound();
+}
+export async function getActiveRound() {
+  const round = await ensureVotingRound();
+  return round && isRoundOpen(round) ? round : null;
 }
 export async function getRoundBySlug(slug: string) {
   await ensureVotingRound();

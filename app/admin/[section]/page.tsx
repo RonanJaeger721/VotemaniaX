@@ -2,13 +2,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireChatGPTUser } from '@/app/chatgpt-auth';
 import { AdminShell } from '@/components/admin-shell';
-import {
-  ensureSourceSnapshot,
-  getPublicContestants,
-} from '@/lib/platform-store';
+import { ensureSourceSnapshot } from '@/lib/platform-store';
 import { getDb } from '@/db';
 import {
   auditLogs,
+  contestants,
   events,
   faqs,
   media,
@@ -17,7 +15,7 @@ import {
   subscribers,
   votes,
 } from '@/db/schema';
-import { desc } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 const sections = [
   'events',
@@ -34,12 +32,12 @@ export default async function AdminSection({
   searchParams,
 }: {
   params: Promise<{ section: string }>;
-  searchParams: Promise<{ q?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; edit?: string; saved?: string }>;
 }) {
   const { section } = await params;
   if (!sections.includes(section)) notFound();
   const user = await requireChatGPTUser(`/admin/${section}`);
-  const { q = '', status = '' } = await searchParams;
+  const { q = '', status = '', edit = '', saved = '' } = await searchParams;
   await ensureSourceSnapshot();
   const db = getDb();
   const [
@@ -51,7 +49,7 @@ export default async function AdminSection({
     auditRows,
   ] = await Promise.all([
     db.select().from(events).orderBy(desc(events.createdAt)),
-    getPublicContestants(),
+    db.select({ id: contestants.id, eventId: contestants.eventId, name: contestants.name, slug: contestants.slug, category: contestants.category, bio: contestants.bio, status: contestants.status, votes: sql<number>`coalesce(sum(${votes.quantity}),0)` }).from(contestants).leftJoin(votes, eq(contestants.id, votes.contestantId)).groupBy(contestants.id).orderBy(desc(sql`coalesce(sum(${votes.quantity}),0)`)),
     db.select().from(payments).orderBy(desc(payments.createdAt)),
     db.select().from(votes).orderBy(desc(votes.createdAt)),
     db.select().from(siteSettings),
@@ -79,6 +77,7 @@ export default async function AdminSection({
       {},
     ),
   );
+  const editing = contestantRows.find((row) => String(row.id) === edit);
   return (
     <AdminShell user={user} active={section}>
       <header>
@@ -94,6 +93,7 @@ export default async function AdminSection({
             statuses={['draft', 'published', 'upcoming', 'completed']}
             q={q}
             status={status}
+            dataset="events"
           />
           <form
             className="admin-create"
@@ -143,6 +143,7 @@ export default async function AdminSection({
             ]}
             q={q}
             status={status}
+            dataset="participants"
           />
           <form
             className="admin-create"
@@ -150,17 +151,20 @@ export default async function AdminSection({
             action="/api/admin/manage"
           >
             <input type="hidden" name="type" value="contestant" />
-            <input name="name" placeholder="Participant name" required />
-            <input name="slug" placeholder="participant-slug" required />
-            <input name="category" placeholder="Category" required />
-            <select name="eventId">
+            {editing && <input type="hidden" name="id" value={editing.id} />}
+            <input name="name" defaultValue={editing?.name} placeholder="Participant name" required />
+            <input name="slug" defaultValue={editing?.slug} placeholder="participant-slug" required />
+            <input name="category" defaultValue={editing?.category} placeholder="Category" required />
+            <select name="eventId" defaultValue={editing?.eventId ?? eventRows[0]?.id}>
               {eventRows.map((e) => (
                 <option value={e.id} key={e.id}>
                   {e.name}
                 </option>
               ))}
             </select>
-            <button>Add participant</button>
+            <input name="bio" defaultValue={editing?.bio} placeholder="Public biography" />
+            <select name="status" defaultValue={editing?.status ?? 'pending'}><option value="pending">Pending</option><option value="awaiting-upload">Awaiting upload</option><option value="approved">Approved</option><option value="disqualified">Disqualified</option><option value="inactive">Archived</option></select>
+            <button>{editing ? 'Save participant' : 'Add participant'}</button>
           </form>
           <AdminTable
             headers={[
@@ -177,7 +181,7 @@ export default async function AdminSection({
               `#${i + 1}`,
               c.votes,
               c.status,
-              'Edit · Request upload',
+              <div className="admin-row-actions"><Link href={`/admin/participants?edit=${c.id}`}>Edit</Link><form method="post" action="/api/admin/manage"><input type="hidden" name="type" value="contestant-status"/><input type="hidden" name="id" value={c.id}/><input type="hidden" name="status" value="awaiting-upload"/><button>Request upload</button></form><form method="post" action="/api/admin/manage"><input type="hidden" name="type" value="contestant-status"/><input type="hidden" name="id" value={c.id}/><input type="hidden" name="status" value={c.status === 'approved' ? 'inactive' : 'approved'}/><button>{c.status === 'approved' ? 'Archive' : 'Approve'}</button></form></div>,
             ])}
           />
         </>
@@ -195,6 +199,7 @@ export default async function AdminSection({
             ]}
             q={q}
             status={status}
+            dataset="payments"
           />
           <AdminTable
             headers={[
@@ -250,6 +255,7 @@ export default async function AdminSection({
             <span>Database</span>
             <span>Appearance</span>
           </div>
+          {saved === '1' && <p className="admin-success" role="status">Settings saved.</p>}
           <form
             className="settings-form"
             method="post"
@@ -280,12 +286,17 @@ export default async function AdminSection({
               />
             </label>
             <label>
+              Support phone
+              <input name="support_phone" defaultValue={setting(settingRows, 'support_phone', '+263 719 308 153')} />
+            </label>
+            <label>
               Timezone
               <input
                 name="timezone"
                 defaultValue={setting(settingRows, 'timezone', 'Africa/Harare')}
               />
             </label>
+            <label>Default round duration (days)<input name="default_round_duration" type="number" min="1" defaultValue={setting(settingRows, 'default_round_duration', '7')} /></label>
             <button>Save changes</button>
           </form>
           <AdminTable
@@ -343,10 +354,12 @@ function Toolbar({
   statuses,
   q,
   status,
+  dataset,
 }: {
   statuses: string[];
   q: string;
   status: string;
+  dataset: string;
 }) {
   return (
     <form className="admin-toolbar">
@@ -358,6 +371,7 @@ function Toolbar({
         ))}
       </select>
       <button>Filter</button>
+      <a href={`/api/admin/export?dataset=${dataset}`}>Export CSV</a>
     </form>
   );
 }
@@ -384,7 +398,7 @@ function AdminTable({
   rows,
 }: {
   headers: string[];
-  rows: (string | number | null)[][];
+  rows: React.ReactNode[][];
 }) {
   return (
     <div className="admin-table">

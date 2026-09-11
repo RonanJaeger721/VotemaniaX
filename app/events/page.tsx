@@ -6,12 +6,14 @@ import { getDb } from '@/db';
 import { events } from '@/db/schema';
 import { desc } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
-export default async function Events() {
+export default async function Events({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  const { status = 'all' } = await searchParams;
   await ensureSourceSnapshot();
   const rows = await getDb()
     .select()
     .from(events)
     .orderBy(desc(events.createdAt));
+  const filtered = rows.filter((event) => status === 'all' || (status === 'completed' ? event.status === 'closed' : event.status === status));
   return (
     <main className="site-shell">
       <PublicHeader />
@@ -23,13 +25,11 @@ export default async function Events() {
           <em>Every moment.</em>
         </h1>
         <div className="event-tabs">
-          <span>Live</span>
-          <span>Upcoming</span>
-          <span>Completed</span>
+          {['all', 'live', 'upcoming', 'completed'].map((item) => <Link className={status === item ? 'active' : ''} href={item === 'all' ? '/events' : `/events?status=${item}`} key={item}>{item}</Link>)}
         </div>
       </section>
       <section className="events-list">
-        {rows.map((event) => (
+        {filtered.map((event) => (
           <article className="event-feature" key={event.id}>
             <div className="event-art">
               <span>V</span>
@@ -68,6 +68,7 @@ export default async function Events() {
             </div>
           </article>
         ))}
+        {!filtered.length && <div className="public-empty"><h2>No {status} events.</h2><p>Events will appear here when an administrator publishes them.</p></div>}
       </section>
       <PublicFooter />
     </main>

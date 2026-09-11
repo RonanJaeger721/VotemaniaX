@@ -8,6 +8,7 @@ import {
   faqs,
   siteSettings,
 } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 export async function POST(request: Request) {
   const user = await getChatGPTUser();
   if (!user)
@@ -33,17 +34,23 @@ export async function POST(request: Request) {
       });
     destination = '/admin/events';
   } else if (type === 'contestant') {
-    await db
-      .insert(contestants)
-      .values({
+    const id = Number(form.get('id') || 0);
+    const values = {
         eventId: Number(form.get('eventId')),
         name: String(form.get('name')),
         slug: String(form.get('slug')),
         category: String(form.get('category')),
-        bio: '',
-        status: 'approved',
-        createdAt: now,
-      });
+        bio: String(form.get('bio') || ''),
+        status: String(form.get('status') || 'pending'),
+      };
+    if (id) await db.update(contestants).set(values).where(eq(contestants.id, id));
+    else await db.insert(contestants).values({ ...values, createdAt: now });
+    destination = '/admin/participants';
+  } else if (type === 'contestant-status') {
+    const id = Number(form.get('id'));
+    const status = String(form.get('status'));
+    if (!['pending', 'awaiting-upload', 'approved', 'disqualified', 'inactive'].includes(status)) return NextResponse.json({ message: 'Invalid contestant status' }, { status: 400 });
+    await db.update(contestants).set({ status }).where(eq(contestants.id, id));
     destination = '/admin/participants';
   } else if (type === 'faq') {
     await db
@@ -57,7 +64,7 @@ export async function POST(request: Request) {
       });
     destination = '/admin/faqs';
   } else if (type === 'settings-bundle') {
-    for (const key of ['company_name', 'support_email', 'timezone']) {
+    for (const key of ['company_name', 'support_email', 'support_phone', 'timezone', 'default_round_duration']) {
       const value = String(form.get(key) || '');
       await db
         .insert(siteSettings)
@@ -67,7 +74,7 @@ export async function POST(request: Request) {
           set: { value, updatedAt: now },
         });
     }
-    destination = '/admin/settings';
+    destination = '/admin/settings?saved=1';
   } else if (type === 'setting') {
     await db
       .insert(siteSettings)
@@ -90,10 +97,13 @@ export async function POST(request: Request) {
     .insert(auditLogs)
     .values({
       adminUserId: user.userId,
-      action: `create_${type}`,
+      action: type === 'contestant-status' ? `change_contestant_status_${String(form.get('status'))}` : idAction(type, form),
       entityType: type,
       payload: JSON.stringify(Object.fromEntries(form)),
       createdAt: now,
     });
   return NextResponse.redirect(new URL(destination, request.url), 303);
+}
+function idAction(type: string, form: FormData) {
+  return form.get('id') ? `update_${type}` : `create_${type}`;
 }

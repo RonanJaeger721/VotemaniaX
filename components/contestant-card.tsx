@@ -1,18 +1,19 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { ContestantAvatar } from '@/components/contestant-avatar';
 export function ContestantCard({
   item,
   index,
   voteHref,
 }: {
-  item: { slug: string; name: string; category: string; votes: number };
+  item: { slug: string; name: string; category: string; votes: number; imageKey?: string | null };
   index: number;
   voteHref?: string;
 }) {
   return (
     <article className={`contestant-card card-${index % 3}`}>
       <div className="contestant-visual">
-        <span>{item.name.charAt(0)}</span>
+        <ContestantAvatar name={item.name} photoUrl={item.imageKey} />
         <b>#{String(index + 1).padStart(2, '0')}</b>
       </div>
       <div className="contestant-copy">

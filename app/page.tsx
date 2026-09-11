@@ -1,25 +1,27 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, Play, Trophy } from 'lucide-react';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
 import { NewsletterForm } from '@/components/newsletter-form';
 import { RoundCountdown } from '@/components/round-countdown';
+import { ContestantAvatar } from '@/components/contestant-avatar';
 import { getCategories, getPublishedVideos } from '@/lib/application-store';
 import {
   ensureSourceSnapshot,
-  getCurrentRound,
+  getActiveFaqs,
+  getActiveRound,
   getLiveEvent,
   getPublicContestants,
 } from '@/lib/platform-store';
 export const dynamic = 'force-dynamic';
 export default async function Home() {
   await ensureSourceSnapshot();
-  const [contestants, event, round, categories, videos] = await Promise.all([
+  const [contestants, event, round, categories, videos, faqRows] = await Promise.all([
     getPublicContestants(),
     getLiveEvent(),
-    getCurrentRound(),
+    getActiveRound(),
     getCategories(),
     getPublishedVideos(),
+    getActiveFaqs(),
   ]);
   const leaders = contestants.slice(0, 5);
   return (
@@ -52,13 +54,11 @@ export default async function Home() {
       </section>
       <section className="feed-hero">
         <div className="featured-media">
-          <Image
-            src="/performer-hero.png"
-            alt="Featured VoteManiaX contestant performing"
-            fill
-            priority
-            sizes="(max-width: 700px) 100vw, 62vw"
-          />
+          {leaders[0] ? (
+            <ContestantAvatar name={leaders[0].name} photoUrl={leaders[0].imageKey} priority />
+          ) : (
+            <div className="featured-empty-mark" aria-hidden="true">VX</div>
+          )}
           <div className="featured-overlay">
             <small>FEATURED THIS WEEK</small>
             <h1>{leaders[0]?.name ?? 'The stage is ready'}</h1>
@@ -160,7 +160,7 @@ export default async function Home() {
             [
               '01',
               'Find your favourite',
-              'Watch performers’ clips and choose the talent that speaks to you.',
+              'Browse performers, watch their clips, and pick the one who speaks to you.',
             ],
             [
               '02',
@@ -170,7 +170,7 @@ export default async function Home() {
             [
               '03',
               'Cast your vote',
-              'Vote as many times as you want and help your favourite climb the leaderboard.',
+              'Vote as many times as you want. Help your favourite climb to the top.',
             ],
           ].map(([n, t, p]) => (
             <article key={n}>
@@ -183,6 +183,15 @@ export default async function Home() {
             </article>
           ))}
         </div>
+      </section>
+      <section className="faq-preview">
+        <header>
+          <div><p className="eyebrow">FREQUENTLY ASKED QUESTIONS</p><h2>Before you vote.</h2></div>
+          <Link href="/faq">View all questions <ArrowUpRight /></Link>
+        </header>
+        {faqRows.length ? <div className="faq-list">{faqRows.slice(0, 3).map((item) => (
+          <details key={item.id}><summary>{item.question}</summary><p>{item.answer}</p></details>
+        ))}</div> : <div className="empty-state"><h3>Questions are being prepared.</h3><p>Published answers will appear here.</p></div>}
       </section>
       <section className="newsletter-section">
         <div>

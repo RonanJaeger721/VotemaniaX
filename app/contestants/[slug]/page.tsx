@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowUpRight } from 'lucide-react';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
 import { ShareButton } from '@/components/share-button';
+import { ContestantAvatar } from '@/components/contestant-avatar';
 import {
   getCurrentRound,
   getLiveEvent,
@@ -27,16 +27,7 @@ export default async function Profile({
       <PublicHeader />
       <section className="profile-hero">
         <div className="profile-art">
-          {rank === 1 ? (
-            <Image
-              src="/performer-hero.png"
-              fill
-              alt={`${item.name} performing`}
-              sizes="(max-width:800px) 90vw,45vw"
-            />
-          ) : (
-            <span>{item.name.charAt(0)}</span>
-          )}
+          <ContestantAvatar name={item.name} photoUrl={item.imageKey} priority />
           <b>#{String(rank).padStart(2, '0')}</b>
         </div>
         <div className="profile-copy">

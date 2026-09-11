@@ -4,9 +4,13 @@ import { ArrowUpRight, Clock, Radio } from 'lucide-react';
 import { ContestantCard } from '@/components/contestant-card';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
 import { ShareButton } from '@/components/share-button';
+import { RoundCountdown } from '@/components/round-countdown';
 import {
   ensureSourceSnapshot,
+  getRounds,
   getPublicContestants,
+  getRoundContestants,
+  isRoundOpen,
 } from '@/lib/platform-store';
 import { getDb } from '@/db';
 import { events } from '@/db/schema';
@@ -23,7 +27,9 @@ export default async function Event({
     await getDb().select().from(events).where(eq(events.slug, slug)).limit(1)
   )[0];
   if (!event) notFound();
-  const contestants = await getPublicContestants();
+  const rounds = (await getRounds()).filter((round) => round.eventId === event.id);
+  const currentRound = rounds.find((round) => isRoundOpen(round)) ?? null;
+  const contestants = currentRound ? await getRoundContestants(currentRound.id) : await getPublicContestants(event.id);
   return (
     <main className="site-shell">
       <PublicHeader />
@@ -41,9 +47,10 @@ export default async function Event({
             {event.currency} {event.votePrice.toFixed(2)} per vote
           </span>
         </div>
+        {currentRound && <RoundCountdown startAt={currentRound.startAt.toISOString()} endAt={currentRound.endAt.toISOString()} />}
         <div className="hero-actions">
-          {event.status === 'live' && (
-            <Link className="primary-action" href="/contestants">
+          {currentRound && (
+            <Link className="primary-action" href={`/vote/${currentRound.slug}`}>
               Back your favourite <ArrowUpRight size={18} />
             </Link>
           )}
@@ -53,8 +60,9 @@ export default async function Event({
       <section className="event-module-head">
         <p className="eyebrow">COMPETING NOW</p>
         <h2>{contestants.length} contestants</h2>
-        <Link href="/leaderboard">View full leaderboard</Link>
+        <Link href={currentRound ? `/leaderboard/${currentRound.slug}` : '/leaderboard'}>View full leaderboard</Link>
       </section>
+      {rounds.length > 0 && <section className="event-rules"><p className="eyebrow">VOTING WEEKS</p><h2>Round history</h2><div className="round-link-list">{rounds.map((round) => <Link key={round.id} href={round.status === 'closed' ? `/results/${round.slug}` : `/vote/${round.slug}`}><strong>{round.name}</strong><span>{round.status} · {date(round.startAt)} — {date(round.endAt)}</span></Link>)}</div></section>}
       <section className="contestant-grid compact">
         {contestants.map((item, index) => (
           <ContestantCard item={item} index={index} key={item.slug} />
