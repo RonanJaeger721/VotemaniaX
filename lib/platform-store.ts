@@ -24,6 +24,7 @@ export async function ensureSourceSnapshot() {
       .update(events)
       .set({ name: 'VoteManiaX Season 01' })
       .where(eq(events.name, 'VoteMania Season 01'));
+    await ensureDefaultFaqs();
     return;
   }
   const now = new Date();
@@ -84,32 +85,34 @@ export async function ensureSourceSnapshot() {
         });
     }
   }
-  await db.insert(faqs).values([
-    {
-      question: 'When does my vote count?',
-      answer:
-        'Only after the payment provider returns a verified success. Pending, failed, cancelled and expired payments never change the leaderboard.',
-      active: true,
-      displayOrder: 1,
-      createdAt: now,
-    },
-    {
-      question: 'Can I vote more than once?',
-      answer:
-        'Yes. Choose your vote quantity during checkout, subject to the active event settings.',
-      active: true,
-      displayOrder: 2,
-      createdAt: now,
-    },
-    {
-      question: 'Where can I see results?',
-      answer:
-        'Open the live leaderboard. Closed events remain available as final results.',
-      active: true,
-      displayOrder: 3,
-      createdAt: now,
-    },
-  ]);
+  await ensureDefaultFaqs();
+}
+
+const defaultFaqs = [
+  ['How do I register as a contestant?', 'Open contestant sign up, complete your details and choose a talent category. Your profile and event participation remain subject to VoteManiaX approval.'],
+  ['How do I vote?', 'Open a contestant profile or the current voting week, choose a vote quantity and follow the payment steps. Votes are added after payment is verified.'],
+  ['Do I need an account to vote?', 'You can browse VoteManiaX without an account. Whether contact details or sign-in are required during voting depends on the active payment method and competition rules.'],
+  ['Can I vote more than once?', 'Yes, where the active competition rules allow it. Each later vote is recorded as a separate verified transaction.'],
+  ['How much does a vote cost?', 'The official price per vote appears on the active event and checkout screen. The server calculates the total from the quantity you select.'],
+  ['Which payment methods are accepted?', 'Available methods are shown at checkout. EcoCash, OneMoney, InnBucks and OMari can be enabled after the required provider accounts are configured.'],
+  ['How long does voting stay open?', 'A standard VoteManiaX voting week runs for seven days. The live countdown shows the exact closing time for the current round.'],
+  ['How do I share my voting link?', 'Open your contestant profile or contestant portal and use Share or Copy Link. The link opens the relevant contestant inside the current voting round.'],
+  ['How do contestants upload videos?', 'Signed-in contestants can open Videos in their portal, select one or more files, add the required details and submit them for review.'],
+  ['Who can see a video before it is approved?', 'Pending submissions are available to the contestant and authorised VoteManiaX administrators for review. They are not shown in the public video feed.'],
+  ['When does my video become public?', 'A video becomes public only after an authorised administrator approves and publishes it and the required contestant consent has been recorded.'],
+  ['Can I request my content to be removed?', 'Yes. Contact VoteManiaX support with the content and account details needed to review your request under the published competition terms.'],
+  ['How are winners decided?', 'Published results use verified votes for the selected event and voting round, together with any event-specific rules shown for that competition.'],
+  ['What happens if my payment fails?', 'Failed, cancelled, expired and pending payments do not create votes. Follow the provider instructions or contact support with your transaction reference.'],
+  ['How do I contact VoteManiaX support?', 'Email thevibehub26@gmail.com or call +263 719 308 153. Include a transaction reference when asking about a payment.'],
+] as const;
+
+async function ensureDefaultFaqs() {
+  const db = getDb();
+  const existing = await db.select({ question: faqs.question }).from(faqs);
+  const questions = new Set(existing.map((item) => item.question));
+  const missing = defaultFaqs.filter(([question]) => !questions.has(question));
+  if (!missing.length) return;
+  await db.insert(faqs).values(missing.map(([question, answer], index) => ({ question, answer, active: true, displayOrder: existing.length + index + 1, createdAt: new Date() })));
 }
 export async function getPublicContestants(eventId?: number) {
   await ensureSourceSnapshot();

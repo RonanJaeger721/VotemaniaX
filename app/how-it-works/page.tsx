@@ -1,53 +1,17 @@
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
+
 const steps = [
-  [
-    '01',
-    'Choose an event',
-    'Open a live event and review its dates, rules and vote price.',
-  ],
-  [
-    '02',
-    'Find your favourite',
-    'Browse approved contestants and open a full profile.',
-  ],
-  [
-    '03',
-    'Choose your support',
-    'Select your vote quantity and review the total.',
-  ],
-  [
-    '04',
-    'Complete payment',
-    'Pay through an authorised provider. Pending or failed payments never create votes.',
-  ],
-  [
-    '05',
-    'Watch the result',
-    'After verification, your votes enter the ledger and refresh the live leaderboard.',
-  ],
+  ['01', 'Find your favourite', 'Browse contestants, explore talent categories and watch clips that have been reviewed and published by VoteManiaX. Open a contestant’s profile to learn more and follow their progress.'],
+  ['02', 'Chip in', 'Choose how many votes you want to cast. VoteManiaX calculates the total from the official price for the active competition round before you continue to payment.'],
+  ['03', 'Cast your vote', 'Complete payment through an available authorised method. Your support is added only after the provider confirms the transaction, and you can vote again whenever the competition rules allow it.'],
 ];
-export default function How() {
-  return (
-    <main className="site-shell">
-      <PublicHeader />
-      <section className="page-intro">
-        <p className="eyebrow">FIVE MOVES. ONE VERIFIED RESULT.</p>
-        <h1>
-          Make your
-          <br />
-          <em>vote count.</em>
-        </h1>
-      </section>
-      <section className="steps">
-        {steps.map((s) => (
-          <article key={s[0]}>
-            <span>{s[0]}</span>
-            <h2>{s[1]}</h2>
-            <p>{s[2]}</p>
-          </article>
-        ))}
-      </section>
-      <PublicFooter />
-    </main>
-  );
+
+export default function HowItWorks() {
+  return <main className="site-shell"><PublicHeader />
+    <section className="page-intro"><p className="eyebrow">HOW IT WORKS</p><h1>Three quick steps.<br/><em>That’s all it takes.</em></h1><p>Discover real talent, support your favourite and follow the verified leaderboard throughout each voting week.</p></section>
+    <section className="how-guide">{steps.map(([number, title, copy]) => <article key={number}><span>{number}</span><div><h2>{title}</h2><p>{copy}</p></div></article>)}</section>
+    <section className="process-note"><div><p className="eyebrow">VERIFIED VOTING</p><h2>Every counted vote has a payment record.</h2></div><p>Pending, failed, cancelled and expired payments do not affect the leaderboard. When a round closes, new votes stop and the final results remain available.</p><Link className="primary-action" href="/vote">Vote in the current round <ArrowUpRight /></Link></section>
+    <PublicFooter /></main>;
 }

@@ -22,7 +22,12 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
   const userId = requestHeaders.get(USER_ID_HEADER);
   const email = requestHeaders.get(USER_EMAIL_HEADER);
-  if (!userId || !email) return null;
+  if (!userId || !email) {
+    const { getSessionUser } = await import('@/lib/auth');
+    const sessionUser = await getSessionUser();
+    if (!sessionUser || !['admin', 'super-admin'].includes(sessionUser.role)) return null;
+    return { userId: String(sessionUser.id), displayName: sessionUser.displayName, email: sessionUser.email, fullName: sessionUser.displayName };
+  }
 
   const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
   const fullName =

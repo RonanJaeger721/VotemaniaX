@@ -17,6 +17,7 @@ const links = [
   ['Categories', '/categories'],
   ['Leaderboard', '/leaderboard'],
   ['Results', '/results'],
+  ['Admin', '/admin/login'],
 ] as const;
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
@@ -59,7 +60,6 @@ export async function PublicHeader() {
                   <ArrowUpRight size={15} />
                 </Link>
               ))}
-              <Link href="/admin">Admin portal</Link>
             </div>
           </details>
           <Link className="nav-cta" href={voteHref}>
@@ -117,7 +117,7 @@ export function PublicFooter() {
         <Link href="/contact">Contact</Link>
         <Link href="/terms">Terms</Link>
         <Link href="/privacy">Privacy</Link>
-        <Link href="/admin">Admin portal</Link>
+        <Link href="/admin/login">Admin portal</Link>
       </div>
       <div className="footer-signoff">
         <strong>

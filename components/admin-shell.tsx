@@ -18,7 +18,7 @@ import {
   Mail,
   HelpCircle,
 } from 'lucide-react';
-import { chatGPTSignInPath, chatGPTSignOutPath } from '@/app/chatgpt-auth';
+import { chatGPTSignInPath } from '@/app/chatgpt-auth';
 import { Brand } from '@/components/public-shell';
 
 export const adminNav = [
@@ -77,9 +77,7 @@ export function AdminShell({
               <strong>{user.displayName}</strong>
               <small>Administrator</small>
             </div>
-            <Link href={chatGPTSignOutPath('/')} aria-label="Sign out">
-              <LogOut size={16} />
-            </Link>
+            <form action="/api/auth/logout" method="post"><button aria-label="Sign out"><LogOut size={16} /></button></form>
           </div>
         ) : (
           <div className="admin-user admin-guest">
