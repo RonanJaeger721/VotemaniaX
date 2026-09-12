@@ -9,7 +9,7 @@ const display = Space_Grotesk({
 });
 const body = Manrope({ variable: '--font-body', subsets: ['latin'] });
 export const metadata: Metadata = {
-  title: 'Vote in this week’s round | VoteManiaX',
+  title: 'VoteManiaX | Your Vote. Their Moment.',
   description:
     'Vote in live seven-day competition rounds, follow verified rankings, and revisit permanent results on VoteManiaX.',
 };

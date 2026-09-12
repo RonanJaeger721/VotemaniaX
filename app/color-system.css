@@ -1,7 +1,7 @@
 :root {
-  --brand-violet: #7546ff;
-  --brand-magenta: #ec3f91;
-  --brand-coral: #ff6557;
+  --brand-orange: #fe7901;
+  --brand-orange-bright: #ff9a1f;
+  --brand-coral: #ffb13b;
   --brand-lime: #c7ff42;
   --surface-base: #0f0f23;
   --surface-card: #1b1b30;
@@ -10,36 +10,36 @@
 
 /* Keep brand hues legible and memorable: one role, one colour. */
 .brand-mark {
-  background: var(--brand-violet);
-  border-color: color-mix(in srgb, var(--brand-magenta) 72%, white);
-  box-shadow: 0 0 28px rgba(117, 70, 255, 0.42);
+  background: var(--brand-orange);
+  border-color: color-mix(in srgb, var(--brand-orange-bright) 72%, white);
+  box-shadow: 0 0 28px rgba(254, 121, 1, 0.42);
 }
 
 .nav-cta,
 .primary-action,
 .newsletter-form button {
-  background: var(--brand-violet);
-  box-shadow: 0 10px 35px rgba(117, 70, 255, 0.28);
+  background: var(--brand-orange);
+  box-shadow: 0 10px 35px rgba(254, 121, 1, 0.28);
 }
 
 .nav-cta:hover,
 .primary-action:hover,
 .newsletter-form button:hover {
-  background: var(--brand-magenta);
-  box-shadow: 0 12px 38px rgba(236, 63, 145, 0.25);
+  background: var(--brand-orange-bright);
+  box-shadow: 0 12px 38px rgba(255, 154, 31, 0.25);
 }
 
 .signal-line span,
 .vote-meter i,
 .mini-rank em,
 .spark-bars i {
-  background: var(--brand-magenta);
+  background: var(--brand-orange-bright);
 }
 
 .leader-row:nth-child(3n + 2) .vote-meter i,
 .mini-rank:nth-child(3n + 2) em,
 .spark-bars i:nth-child(3n + 2) {
-  background: var(--brand-violet);
+  background: var(--brand-orange);
 }
 
 .leader-row:nth-child(3n) .vote-meter i,
@@ -49,7 +49,7 @@
 }
 
 .leader-row:hover {
-  background: rgba(117, 70, 255, 0.08);
+  background: rgba(254, 121, 1, 0.08);
 }
 
 .contestant-visual,
@@ -69,11 +69,11 @@
 
 .podium-card > b,
 .checkout-avatar {
-  background: var(--brand-magenta);
+  background: var(--brand-orange-bright);
 }
 
 .podium-card:nth-child(2) > b {
-  background: var(--brand-violet);
+  background: var(--brand-orange);
 }
 
 .podium-card:nth-child(3) > b {
@@ -87,8 +87,8 @@
 
 .admin-shell aside nav button.active,
 .admin-shell aside nav a.active {
-  background: rgba(117, 70, 255, 0.18);
-  box-shadow: inset 3px 0 0 var(--brand-violet);
+  background: rgba(254, 121, 1, 0.18);
+  box-shadow: inset 3px 0 0 var(--brand-orange);
 }
 
 .settings-tabs .active,
@@ -101,7 +101,7 @@
 .search-bar button,
 .admin-toolbar button,
 .settings-form button {
-  background: var(--brand-violet);
+  background: var(--brand-orange);
 }
 
 /* Gradients are reserved for wide atmospheric fields, never key controls. */
@@ -109,12 +109,12 @@
   background:
     radial-gradient(
       circle at 72% 14%,
-      rgba(117, 70, 255, 0.18),
+      rgba(254, 121, 1, 0.18),
       transparent 27rem
     ),
     radial-gradient(
       circle at 90% 38%,
-      rgba(236, 63, 145, 0.09),
+      rgba(255, 154, 31, 0.09),
       transparent 29rem
     ),
     var(--surface-base);
@@ -124,7 +124,7 @@
   background:
     radial-gradient(
       circle at 8% 100%,
-      rgba(117, 70, 255, 0.17),
+      rgba(254, 121, 1, 0.17),
       transparent 40%
     ),
     var(--surface-card);
@@ -205,8 +205,8 @@
   font-size: 10px;
 }
 .admin-range a.active {
-  background: var(--brand-violet);
-  border-color: var(--brand-violet);
+  background: var(--brand-orange);
+  border-color: var(--brand-orange);
   color: white;
 }
 .chart-caption {
@@ -216,7 +216,7 @@
   font-size: 10px;
 }
 .chart-caption b {
-  color: #b8b0c1;
+  color: #b8b8b8;
 }
 .mini-rank {
   color: inherit;
@@ -231,8 +231,8 @@
 }
 .panel-title > a:hover,
 .admin-access-banner a:hover {
-  background: var(--brand-violet);
-  border-color: var(--brand-violet);
+  background: var(--brand-orange);
+  border-color: var(--brand-orange);
 }
 
 @keyframes bar-rise {

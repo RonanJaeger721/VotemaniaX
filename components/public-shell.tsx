@@ -24,7 +24,7 @@ export function Brand({ compact = false }: { compact?: boolean }) {
     <span className={compact ? 'brand-logo compact' : 'brand-logo'}>
       <Image
         src="/votemaniax-logo.png"
-        alt="VoteManiaX Voting Platform"
+        alt="VoteManiaX — Your Vote. Their Moment."
         width={850}
         height={240}
         priority
@@ -99,7 +99,7 @@ export function PublicFooter() {
         <Link href="/" className="brand">
           <Brand />
         </Link>
-        <p>Seven days. One leaderboard.</p>
+        <p>Your vote. Their moment.</p>
         <a href="mailto:thevibehub26@gmail.com">thevibehub26@gmail.com</a>
         <a href="tel:+263719308153">+263 719 308 153</a>
       </div>
