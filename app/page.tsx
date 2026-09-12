@@ -3,7 +3,6 @@ import { ArrowUpRight, Play, Trophy } from 'lucide-react';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
 import { NewsletterForm } from '@/components/newsletter-form';
 import { RoundCountdown } from '@/components/round-countdown';
-import { ContestantAvatar } from '@/components/contestant-avatar';
 import { getCategories, getPublishedVideos } from '@/lib/application-store';
 import {
   ensureSourceSnapshot,
@@ -53,34 +52,18 @@ export default async function Home() {
         </div>
       </section>
       <section className="feed-hero">
-        <div className="featured-media">
-          {leaders[0] ? (
-            <ContestantAvatar name={leaders[0].name} photoUrl={leaders[0].imageKey} priority />
-          ) : (
-            <div className="featured-empty-mark" aria-hidden="true">VX</div>
-          )}
-          <div className="featured-overlay">
-            <small>FEATURED THIS WEEK</small>
-            <h1>{leaders[0]?.name ?? 'The stage is ready'}</h1>
-            <p>
-              {leaders[0]?.category ?? 'Talent discovery'} ·{' '}
-              {leaders[0]?.votes ?? 0} verified votes
-            </p>
-            <div>
-              {leaders[0] && (
-                <Link href={`/contestants/${leaders[0].slug}`}>
-                  <Play /> Watch profile
-                </Link>
-              )}
-              {round && leaders[0] && (
-                <Link
-                  className="gold"
-                  href={`/vote/${round.slug}/${leaders[0].slug}`}
-                >
-                  Vote for {leaders[0].name}
-                </Link>
-              )}
-            </div>
+        <div className="featured-round-summary">
+          <small>CURRENT COMPETITION</small>
+          <h1>{event?.name ?? 'VoteManiaX Talent Showcase'}</h1>
+          <p>
+            Explore the contestants, watch approved performances and support the
+            talent that earns your vote.
+          </p>
+          <div>
+            <Link href="/contestants">
+              Browse contestants <ArrowUpRight />
+            </Link>
+            <Link href="/watch">Watch approved clips <Play /></Link>
           </div>
         </div>
         <aside>
