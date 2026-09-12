@@ -65,7 +65,7 @@ export default async function Event({
       {rounds.length > 0 && <section className="event-rules"><p className="eyebrow">VOTING WEEKS</p><h2>Round history</h2><div className="round-link-list">{rounds.map((round) => <Link key={round.id} href={round.status === 'closed' ? `/results/${round.slug}` : `/vote/${round.slug}`}><strong>{round.name}</strong><span>{round.status} · {date(round.startAt)} — {date(round.endAt)}</span></Link>)}</div></section>}
       <section className="contestant-grid compact">
         {contestants.map((item, index) => (
-          <ContestantCard item={item} index={index} key={item.slug} />
+          <ContestantCard item={item} index={index} key={item.slug} voteHref={currentRound ? `/vote/${currentRound.slug}` : undefined} />
         ))}
       </section>
       <section className="event-rules">

@@ -4,6 +4,7 @@ import { getDb } from '@/db';
 import { categories, contestants } from '@/db/schema';
 import { PublicHeader, PublicFooter } from '@/components/public-shell';
 import { ContestantCard } from '@/components/contestant-card';
+import { getActiveRound } from '@/lib/platform-store';
 export const dynamic = 'force-dynamic';
 export default async function Category({
   params,
@@ -19,6 +20,7 @@ export default async function Category({
       .limit(1)
   )[0];
   if (!category || !category.active) notFound();
+  const round = await getActiveRound();
   const people = await getDb()
     .select({
       id: contestants.id,
@@ -42,7 +44,7 @@ export default async function Category({
         {people
           .filter((p) => p.status === 'approved')
           .map((p, i) => (
-            <ContestantCard key={p.id} item={{ ...p, votes: 0 }} index={i} />
+            <ContestantCard key={p.id} item={{ ...p, votes: 0 }} index={i} voteHref={round ? `/vote/${round.slug}` : undefined} />
           ))}
       </section>
       <PublicFooter />

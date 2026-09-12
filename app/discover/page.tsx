@@ -2,13 +2,14 @@ import Link from 'next/link';
 import { Search, ArrowUpRight, Play } from 'lucide-react';
 import { PublicHeader, PublicFooter } from '@/components/public-shell';
 import { getCategories, getPublishedVideos } from '@/lib/application-store';
-import { getPublicContestants } from '@/lib/platform-store';
+import { getActiveRound, getPublicContestants } from '@/lib/platform-store';
 export const dynamic = 'force-dynamic';
 export default async function Discover() {
-  const [categories, videos, contestants] = await Promise.all([
+  const [categories, videos, contestants, round] = await Promise.all([
     getCategories(),
     getPublishedVideos(),
     getPublicContestants(),
+    getActiveRound(),
   ]);
   return (
     <main className="site-shell">
@@ -87,12 +88,12 @@ export default async function Discover() {
           <Link href="/contestants">All contestants</Link>
         </header>
         {contestants.slice(0, 6).map((c, i) => (
-          <Link href={`/contestants/${c.slug}`} key={c.id}>
+          <article className="talent-row" key={c.id}>
             <span>0{i + 1}</span>
-            <strong>{c.name}</strong>
-            <small>{c.category}</small>
+            <Link href={`/contestants/${c.slug}`}><strong>{c.name}</strong><small>{c.category}</small></Link>
             <b>{c.votes} votes</b>
-          </Link>
+            {round && <Link className="inline-vote-action" href={`/vote/${round.slug}/${c.slug}`}>Vote for {c.name}</Link>}
+          </article>
         ))}
       </section>
       <PublicFooter />

@@ -90,14 +90,15 @@ export default async function Home() {
         <aside>
           <small>LIVE TOP FIVE</small>
           {leaders.map((c, i) => (
-            <Link href={`/contestants/${c.slug}`} key={c.id}>
+            <article className="home-leader-row" key={c.id}>
               <span>{String(i + 1).padStart(2, '0')}</span>
-              <div>
+              <Link href={`/contestants/${c.slug}`}>
                 <strong>{c.name}</strong>
                 <small>{c.category}</small>
-              </div>
+              </Link>
               <b>{c.votes}</b>
-            </Link>
+              {round && <Link className="inline-vote-action" href={`/vote/${round.slug}/${c.slug}`}>Vote for {c.name}</Link>}
+            </article>
           ))}
           <Link className="board-link" href="/leaderboard">
             <Trophy /> Full leaderboard

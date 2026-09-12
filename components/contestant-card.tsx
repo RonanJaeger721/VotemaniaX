@@ -26,7 +26,7 @@ export function ContestantCard({
           </Link>
           {voteHref ? (
             <Link className="mini-vote" href={`${voteHref}/${item.slug}`}>
-              Vote
+              Vote for {item.name}
             </Link>
           ) : null}
         </div>

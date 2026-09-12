@@ -810,6 +810,19 @@ h1 em,
 .feed-hero > aside > a > b {
   color: #fe7901;
 }
+.home-leader-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.home-leader-row > span { color: #777; }
+.home-leader-row > a:not(.inline-vote-action) { display: flex; min-width: 0; flex-direction: column; }
+.home-leader-row small { color: #777; }
+.home-leader-row > b { color: #fe7901; }
+.home-leader-row .inline-vote-action { grid-column: 2 / -1; }
 .board-link {
   margin-top: auto;
   min-height: 48px;
@@ -998,21 +1011,41 @@ h1 em,
   color: #888;
   margin: 6px 0;
 }
-.talent-strip > a {
+.talent-strip > a,
+.talent-strip > .talent-row {
   display: grid;
-  grid-template-columns: 50px 1fr 1fr auto;
+  grid-template-columns: 50px minmax(0, 1fr) auto minmax(160px, auto);
+  gap: 16px;
+  align-items: center;
   padding: 20px 0;
   border-top: 1px solid var(--line);
 }
-.talent-strip > a:last-child {
+.talent-strip > a:last-child,
+.talent-strip > .talent-row:last-child {
   border-bottom: 1px solid var(--line);
 }
 .talent-strip > a > span,
-.talent-strip > a > b {
+.talent-strip > a > b,
+.talent-strip > .talent-row > span,
+.talent-strip > .talent-row > b {
   color: #fe7901;
 }
+.talent-row > a:not(.inline-vote-action) { display: flex; min-width: 0; flex-direction: column; }
+.talent-row small,
 .talent-strip > a > small {
   color: #888;
+}
+.inline-vote-action {
+  min-height: 44px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fe7901;
+  color: #050505 !important;
+  font-size: 12px;
+  font-weight: 850;
+  text-align: center;
 }
 .watch-head {
   width: min(1000px, calc(100% - 48px));
@@ -1592,12 +1625,14 @@ h1 em,
     margin: 5px 0;
     height: 95px;
   }
-  .talent-strip > a {
-    grid-template-columns: 35px 1fr auto;
+  .talent-strip > a,
+  .talent-strip > .talent-row {
+    grid-template-columns: 35px minmax(0, 1fr) auto;
   }
   .talent-strip > a > small {
     display: none;
   }
+  .talent-row .inline-vote-action { grid-column: 2 / -1; width: 100%; }
   .watch-head {
     width: calc(100% - 28px);
     display: block;

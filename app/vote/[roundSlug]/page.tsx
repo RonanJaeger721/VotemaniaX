@@ -63,7 +63,7 @@ export default async function RoundPage({
             <strong>{p.votes} votes</strong>
             {open ? (
               <Link className="vote-now" href={`/vote/${round.slug}/${p.slug}`}>
-                Vote
+                Vote for {p.name}
               </Link>
             ) : null}
           </article>

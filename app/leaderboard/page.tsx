@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
-import { getLiveEvent, getPublicContestants } from '@/lib/platform-store';
+import { getActiveRound, getLiveEvent, getPublicContestants } from '@/lib/platform-store';
 import { ShareButton } from '@/components/share-button';
 export const dynamic = 'force-dynamic';
 export default async function Leaderboard({
@@ -10,7 +10,7 @@ export default async function Leaderboard({
   searchParams: Promise<{ q?: string; category?: string }>;
 }) {
   const all = await getPublicContestants();
-  const event = await getLiveEvent();
+  const [event, round] = await Promise.all([getLiveEvent(), getActiveRound()]);
   const { q = '', category = '' } = await searchParams;
   const categories = [...new Set(all.map((c) => c.category))];
   const sorted = all.filter(
@@ -77,20 +77,16 @@ export default async function Leaderboard({
         {sorted.map((c) => {
           const rank = all.findIndex((x) => x.id === c.id) + 1;
           return (
-            <Link
-              href={`/contestants/${c.slug}`}
-              className="board-row"
-              key={c.slug}
-            >
+            <article className="board-row" key={c.slug}>
               <strong>{String(rank).padStart(2, '0')}</strong>
               <span className="avatar">{c.name.charAt(0)}</span>
-              <div>
+              <Link href={`/contestants/${c.slug}`}>
                 <b>{c.name}</b>
                 <small>{c.category}</small>
-              </div>
+              </Link>
               <span>{c.votes} votes</span>
-              <ArrowUpRight size={18} />
-            </Link>
+              {round ? <Link className="inline-vote-action" href={`/vote/${round.slug}/${c.slug}`}>Vote for {c.name}</Link> : <ArrowUpRight size={18} />}
+            </article>
           );
         })}
       </section>
