@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Manrope, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import './brand-v2.css';
+import { HardNavigation } from '@/components/hard-navigation';
 const display = Space_Grotesk({
   variable: '--font-display',
   subsets: ['latin'],
@@ -17,7 +18,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${display.variable} ${body.variable}`}>{children}</body>
+      <body className={`${display.variable} ${body.variable}`}><HardNavigation />{children}</body>
     </html>
   );
 }
