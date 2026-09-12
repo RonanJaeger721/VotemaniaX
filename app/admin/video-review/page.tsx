@@ -1,12 +1,15 @@
+import Link from 'next/link';
 import { AdminShell } from '@/components/admin-shell';
 import { requireChatGPTUser } from '@/app/chatgpt-auth';
 import { getReviewVideos } from '@/lib/application-store';
 export const dynamic = 'force-dynamic';
-export default async function Review() {
+export default async function Review({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  const { status = '' } = await searchParams;
   const [user, videos] = await Promise.all([
     requireChatGPTUser('/admin/video-review'),
     getReviewVideos(),
   ]);
+  const visible = status ? videos.filter((video) => video.status === status) : videos;
   return (
     <AdminShell user={user} active="video-review">
       <header>
@@ -18,16 +21,14 @@ export default async function Review() {
           {videos.filter((v) => v.status === 'pending').length} waiting
         </span>
       </header>
-      <div className="review-filters">
-        <span className="active">All</span>
-        <span>Pending</span>
-        <span>Approved</span>
-        <span>Needs changes</span>
-        <span>Published</span>
+      <div className="review-filters" aria-label="Filter review queue">
+        {[['', 'All'], ['pending', 'Pending'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['needs_changes', 'Needs changes'], ['published', 'Published']].map(([value, label]) => (
+          <Link className={status === value ? 'active' : ''} href={value ? `/admin/video-review?status=${value}` : '/admin/video-review'} key={value}>{label}</Link>
+        ))}
       </div>
-      {videos.length ? (
+      {visible.length ? (
         <section className="review-grid">
-          {videos.map((v) => (
+          {visible.map((v) => (
             <article key={v.id}>
               <video controls preload="metadata" src={`/media/${v.id}`}>
                 <track
@@ -81,8 +82,7 @@ export default async function Review() {
         <div className="admin-empty">
           <h2>No video submissions</h2>
           <p>
-            New contestant uploads will appear here automatically with their
-            consent record.
+            {status ? `No ${status.replace('_', ' ')} submissions match this filter.` : 'New contestant uploads will appear here automatically with their consent record.'}
           </p>
         </div>
       )}

@@ -17,12 +17,14 @@ import {
   Video,
   Mail,
   HelpCircle,
+  Menu,
+  X,
 } from 'lucide-react';
 import { chatGPTSignInPath } from '@/app/chatgpt-auth';
 import { Brand } from '@/components/public-shell';
 
 export const adminNav = [
-  ['Overview', LayoutDashboard, ''],
+  ['Dashboard', LayoutDashboard, 'dashboard'],
   ['Events', CalendarDays, 'events'],
   ['Categories', Shapes, 'categories'],
   ['Participants', Users, 'participants'],
@@ -33,7 +35,7 @@ export const adminNav = [
   ['Payment methods', CreditCard, 'payment-methods'],
   ['Analytics', Activity, 'analytics'],
   ['Subscribers', Mail, 'subscribers'],
-  ['FAQ', HelpCircle, 'faqs'],
+  ['FAQ', HelpCircle, 'faq'],
   ['Settings', Settings, 'settings'],
   ['Admins', ShieldCheck, 'admins'],
   ['Audit log', FileClock, 'audit-log'],
@@ -50,19 +52,35 @@ export function AdminShell({
 }) {
   return (
     <main className="admin-shell">
-      <aside>
-        <Link href="/admin" className="brand">
+      <aside className="admin-sidebar">
+        <AdminNavigation user={user} active={active} />
+      </aside>
+      <details className="admin-mobile-nav">
+        <summary aria-label="Open admin navigation"><Menu /><span>Admin menu</span></summary>
+        <div className="admin-mobile-drawer">
+          <div className="admin-mobile-drawer-head"><strong>Navigation</strong><X aria-hidden="true" /></div>
+          <AdminNavigation user={user} active={active} />
+        </div>
+      </details>
+      <section className="admin-main">{children}</section>
+    </main>
+  );
+}
+
+function AdminNavigation({ user, active }: { user: { displayName: string } | null; active: string }) {
+  return <>
+        <Link href="/admin/dashboard" className="brand">
           <Brand />
         </Link>
         <Link className="back-public" href="/">
           <ArrowLeft size={14} /> Back to public site
         </Link>
-        <small>PLATFORM</small>
+        <small>ADMIN WORKSPACE</small>
         <nav>
           {adminNav.map(([label, Icon, path]) => (
             <Link
               className={active === path ? 'active' : ''}
-              href={`/admin/${path}`}
+              href={path === 'dashboard' ? '/admin/dashboard' : `/admin/${path}`}
               key={path}
             >
               <Icon size={17} />
@@ -94,8 +112,5 @@ export function AdminShell({
             </Link>
           </div>
         )}
-      </aside>
-      <section className="admin-main">{children}</section>
-    </main>
-  );
+      </>;
 }

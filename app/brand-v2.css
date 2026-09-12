@@ -1402,7 +1402,8 @@ h1 em,
   margin: 30px 0;
   overflow: auto;
 }
-.review-filters span {
+.review-filters span,
+.review-filters a {
   white-space: nowrap;
   padding: 10px 14px;
   border: 1px solid var(--line);

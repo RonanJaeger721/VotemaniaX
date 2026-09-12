@@ -2,18 +2,29 @@ import { NextResponse } from 'next/server';
 import { getChatGPTUser } from '@/app/chatgpt-auth';
 import { getDb } from '@/db';
 import { auditLogs, events, votingRounds } from '@/db/schema';
-import { desc } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 export async function POST(request: Request) {
   const user = await getChatGPTUser();
   if (!user)
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   const form = await request.formData();
-  if (form.get('action') !== 'create-next')
+  const action = String(form.get('action') || '');
+  const roundId = Number(form.get('id') || 0);
+  const db = getDb();
+  if (['start', 'close'].includes(action) && roundId) {
+    const now = new Date();
+    await db.update(votingRounds).set(action === 'start'
+      ? { status: 'live', startAt: now, endAt: new Date(now.getTime() + 7 * 86400000), publishedAt: now }
+      : { status: 'closed', endAt: now, closedAt: now }
+    ).where(eq(votingRounds.id, roundId));
+    await db.insert(auditLogs).values({ adminUserId: user.userId, action: `${action}_voting_round`, entityType: 'voting_round', entityId: String(roundId), createdAt: now });
+    return NextResponse.redirect(new URL(`/admin/voting-rounds?saved=${action}`, request.url), 303);
+  }
+  if (action !== 'create-next')
     return NextResponse.json(
       { message: 'Unsupported action' },
       { status: 400 },
     );
-  const db = getDb();
   const latest = (
     await db
       .select()

@@ -15,6 +15,7 @@ import {
   siteSettings,
   subscribers,
   votes,
+  users,
 } from '@/db/schema';
 import { desc, eq, sql } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
@@ -49,6 +50,7 @@ export default async function AdminSection({
     settingRows,
     auditRows,
     configuredMethods,
+    adminRows,
   ] = await Promise.all([
     db.select().from(events).orderBy(desc(events.createdAt)),
     db.select({ id: contestants.id, eventId: contestants.eventId, name: contestants.name, slug: contestants.slug, category: contestants.category, bio: contestants.bio, status: contestants.status, votes: sql<number>`coalesce(sum(${votes.quantity}),0)` }).from(contestants).leftJoin(votes, eq(contestants.id, votes.contestantId)).groupBy(contestants.id).orderBy(desc(sql`coalesce(sum(${votes.quantity}),0)`)),
@@ -57,6 +59,7 @@ export default async function AdminSection({
     db.select().from(siteSettings),
     db.select().from(auditLogs).orderBy(desc(auditLogs.createdAt)),
     db.select().from(paymentMethods),
+    db.select().from(users).orderBy(desc(users.createdAt)),
   ]);
   const filteredEvents = eventRows.filter(
     (e) =>
@@ -300,14 +303,11 @@ export default async function AdminSection({
       )}
       {section === 'admins' && (
         <section className="admin-profile-list">
-          <article>
-            <span>{user.displayName.charAt(0)}</span>
-            <div>
-              <strong>{user.displayName}</strong>
-              <small>Authenticated platform administrator</small>
-            </div>
-            <b>Active</b>
-          </article>
+          {adminRows.filter((row) => ['admin', 'super-admin'].includes(row.role)).map((admin) => <article key={admin.id}>
+            <span>{admin.displayName.charAt(0)}</span>
+            <div><strong>{admin.displayName}</strong><small>{admin.email} · {admin.role} · Last login {date(admin.lastLoginAt)}</small></div>
+            <b>{admin.status}</b>
+          </article>)}
         </section>
       )}
       {section === 'audit-log' && (

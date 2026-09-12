@@ -7,12 +7,12 @@ export const dynamic = 'force-dynamic';
 export default async function Faqs({ searchParams }: { searchParams: Promise<{ edit?: string; saved?: string }> }) {
   const query = await searchParams;
   const [user, rows] = await Promise.all([
-    requireChatGPTUser('/admin/faqs'),
+    requireChatGPTUser('/admin/faq'),
     getDb().select().from(faqs).orderBy(asc(faqs.displayOrder)),
   ]);
   const editing = rows.find((row) => String(row.id) === query.edit);
   return (
-    <AdminShell user={user} active="faqs">
+    <AdminShell user={user} active="faq">
       <header>
         <div>
           <p>PUBLIC HELP</p>
@@ -60,7 +60,7 @@ export default async function Faqs({ searchParams }: { searchParams: Promise<{ e
                 <td>{r.question}</td>
                 <td>{r.answer}</td>
                 <td>{r.active ? 'Active' : 'Disabled'}</td>
-                <td><div className="admin-row-actions"><a href={`/admin/faqs?edit=${r.id}`}>Edit</a><form action="/api/admin/faq" method="post"><input type="hidden" name="id" value={r.id}/><input type="hidden" name="intent" value="toggle"/><button>{r.active ? 'Disable' : 'Enable'}</button></form><form action="/api/admin/faq" method="post"><input type="hidden" name="id" value={r.id}/><input type="hidden" name="intent" value="delete"/><button>Delete</button></form></div></td>
+                <td><div className="admin-row-actions"><a href={`/admin/faq?edit=${r.id}`}>Edit</a><form action="/api/admin/faq" method="post"><input type="hidden" name="id" value={r.id}/><input type="hidden" name="intent" value="toggle"/><button>{r.active ? 'Disable' : 'Enable'}</button></form><form action="/api/admin/faq" method="post"><input type="hidden" name="id" value={r.id}/><input type="hidden" name="intent" value="delete"/><button>Delete</button></form></div></td>
               </tr>
             ))}
           </tbody>

@@ -5,11 +5,13 @@ const root = process.cwd();
 const routes = [
   '/', '/discover', '/watch', '/events', '/categories', '/contestants',
   '/leaderboard', '/results', '/search', '/how-it-works', '/faq', '/contact',
-  '/terms', '/privacy', '/admin/login', '/admin', '/admin/events',
-  '/admin/participants', '/admin/voting-rounds', '/admin/payments', '/admin/settings',
+  '/terms', '/privacy', '/admin/login', '/admin', '/admin/dashboard', '/admin/events',
+  '/admin/categories', '/admin/participants', '/admin/video-review', '/admin/voting-rounds',
+  '/admin/votes', '/admin/payments', '/admin/payment-methods', '/admin/analytics',
+  '/admin/subscribers', '/admin/faq', '/admin/settings', '/admin/admins', '/admin/audit-log',
   '/contestant/login', '/contestant/register',
 ];
-const dynamicParent = new Set(['/admin/events', '/admin/participants', '/admin/payments', '/admin/settings']);
+const dynamicParent = new Set(['/admin/events', '/admin/participants', '/admin/votes', '/admin/payments', '/admin/payment-methods', '/admin/settings', '/admin/admins', '/admin/audit-log']);
 const missing = routes.filter((route) => {
   if (dynamicParent.has(route)) return !existsSync(join(root, 'app/admin/[section]/page.tsx'));
   const file = route === '/' ? join(root, 'app/page.tsx') : join(root, 'app', route.slice(1), 'page.tsx');

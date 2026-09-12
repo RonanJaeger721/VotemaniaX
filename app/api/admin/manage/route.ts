@@ -69,7 +69,7 @@ export async function POST(request: Request) {
         displayOrder: Date.now(),
         createdAt: now,
       });
-    destination = '/admin/faqs';
+    destination = '/admin/faq';
   } else if (type === 'settings-bundle') {
     for (const key of ['company_name', 'support_email', 'support_phone', 'timezone', 'default_round_duration']) {
       const value = String(form.get(key) || '');

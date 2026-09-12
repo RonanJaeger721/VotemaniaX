@@ -55,7 +55,7 @@ export default async function Admin({
   );
   const max = Math.max(...contestants.map((c) => c.votes), 1);
   return (
-    <AdminShell user={user} active="">
+    <AdminShell user={user} active="dashboard">
       <header>
         <div>
           <p>VOTEMANIAX COMMAND CENTRE</p>

@@ -5,15 +5,14 @@ import { users } from '@/db/schema';
 import { createSession, verifyPassword } from '@/lib/auth';
 
 const INITIAL_ADMIN_LOGIN = 'traqchitida';
-const INITIAL_ADMIN_HASH =
-  '$2b$12$POW2h7ozkU.OZDJxMPh9/eUppfobU4FCUAlGbZKR7D3UHgOR41gou';
-
 async function ensureInitialAdmin() {
+  const passwordHash = process.env.VOTEMANIAX_INITIAL_ADMIN_PASSWORD_HASH;
+  if (!passwordHash) return;
   await getDb()
     .insert(users)
     .values({
       email: INITIAL_ADMIN_LOGIN,
-      passwordHash: INITIAL_ADMIN_HASH,
+      passwordHash,
       role: 'super-admin',
       displayName: 'Traqchitida',
       status: 'active',
@@ -49,7 +48,7 @@ export async function POST(request: Request) {
     .set({ lastLoginAt: new Date() })
     .where(eq(users.id, user.id));
   return NextResponse.redirect(
-    new URL(['admin', 'super-admin'].includes(user.role) ? '/admin' : user.role === 'contestant' ? '/contestant' : '/', request.url),
+    new URL(['admin', 'super-admin'].includes(user.role) ? '/admin/dashboard' : user.role === 'contestant' ? '/contestant' : '/', request.url),
     303,
   );
 }

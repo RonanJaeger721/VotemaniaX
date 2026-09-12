@@ -1054,6 +1054,7 @@ h1 em {
   display: grid;
   grid-template-columns: 250px 1fr;
 }
+.admin-mobile-nav { display: none; }
 .admin-shell > aside {
   position: fixed;
   width: 250px;
@@ -1770,15 +1771,64 @@ h1 em {
   color: white !important;
 }
 @media (max-width: 900px) {
+  .admin-shell {
+    display: block;
+  }
+  .admin-shell > .admin-sidebar {
+    display: none;
+  }
+  .admin-mobile-nav {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    min-height: 58px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(5,5,5,.96);
+  }
+  .admin-mobile-nav > summary {
+    min-height: 58px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: white;
+    font-weight: 700;
+    list-style: none;
+  }
+  .admin-mobile-nav > summary::-webkit-details-marker { display: none; }
+  .admin-mobile-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    padding: 22px 20px;
+    overflow-y: auto;
+    background: #090909;
+    display: flex;
+    flex-direction: column;
+  }
+  .admin-mobile-drawer-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    color: white;
+  }
+  .admin-mobile-drawer > .brand { margin-bottom: 14px; }
+  .admin-mobile-drawer nav { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .admin-mobile-drawer nav a { min-height: 48px; font-size: .78rem !important; justify-content: flex-start !important; }
+  .admin-mobile-drawer .admin-user { margin-top: 28px; }
+  .admin-main { grid-column: auto; padding: 30px 22px 64px; }
   .admin-create {
     grid-template-columns: 1fr 1fr;
   }
-  .admin-shell aside nav a {
-    font-size: 0;
-    justify-content: center;
-  }
 }
 @media (max-width: 600px) {
+  .admin-mobile-drawer nav { grid-template-columns: 1fr; }
+  .admin-main { padding-inline: 18px; }
+  .admin-main > header { align-items: flex-start; gap: 18px; }
+  .admin-main header h1 { font-size: 34px; }
   .admin-create {
     grid-template-columns: 1fr;
   }

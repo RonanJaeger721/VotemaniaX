@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Copy, ExternalLink, LockKeyhole } from 'lucide-react';
+import { ExternalLink, LockKeyhole } from 'lucide-react';
 import { chatGPTSignInPath, requireChatGPTUser } from '@/app/chatgpt-auth';
 import { AdminShell } from '@/components/admin-shell';
 import {
@@ -8,7 +8,8 @@ import {
   getRounds,
 } from '@/lib/platform-store';
 export const dynamic = 'force-dynamic';
-export default async function VotingRounds() {
+export default async function VotingRounds({ searchParams }: { searchParams: Promise<{ saved?: string }> }) {
+  const query = await searchParams;
   const user = await requireChatGPTUser('/admin/voting-rounds');
   const rounds = await getRounds();
   const current = await getCurrentRound();
@@ -39,6 +40,7 @@ export default async function VotingRounds() {
           </Link>
         )}
       </header>
+      {query.saved && <p className="admin-success" role="status">Voting round {query.saved === 'start' ? 'started' : 'closed'}.</p>}
       {current && (
         <section className="current-round">
           <div>
@@ -101,11 +103,10 @@ export default async function VotingRounds() {
                 </td>
                 <td>{people.length}</td>
                 <td>{people.reduce((s, p) => s + p.votes, 0)}</td>
-                <td>
-                  <Link href={`/vote/${round.slug}`}>
-                    <Copy size={14} /> Open link
-                  </Link>
-                </td>
+                <td><div className="admin-row-actions">
+                  <Link href={`/vote/${round.slug}`}><ExternalLink size={14} /> Open</Link>
+                  <form method="post" action="/api/admin/rounds"><input type="hidden" name="id" value={round.id}/><button name="action" value={round.status === 'live' ? 'close' : 'start'}>{round.status === 'live' ? 'Close' : 'Start'}</button></form>
+                </div></td>
               </tr>
             ))}
           </tbody>
