@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowUpRight, Radio } from 'lucide-react';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
 import { ensureSourceSnapshot } from '@/lib/platform-store';
@@ -33,8 +34,12 @@ export default async function Events({ searchParams }: { searchParams: Promise<{
         {filtered.map((event) => (
           <article className="event-feature" key={event.id}>
             <div className="event-art">
-              <span>V</span>
-              <div className="stage-orbit orbit-one" />
+              <Image
+                src="/images/atmosphere/concert-crowd.jpg"
+                alt="Concert audience facing an illuminated festival stage"
+                fill
+                sizes="(max-width: 700px) 100vw, 46vw"
+              />
             </div>
             <div className="event-copy">
               <p className="live-pill">

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowUpRight, Play, Trophy } from 'lucide-react';
 import { PublicFooter, PublicHeader } from '@/components/public-shell';
 import { NewsletterForm } from '@/components/newsletter-form';
@@ -50,6 +51,26 @@ export default async function Home() {
             View rankings
           </Link>
         </div>
+      </section>
+      <section className="stage-story" aria-labelledby="stage-story-title">
+        <div className="stage-story-copy">
+          <small>DISCOVER · SUPPORT · VOTE</small>
+          <h2 id="stage-story-title">The stage is yours.</h2>
+          <strong>Make it count.</strong>
+          <p>Discover talent. Support your favourites. Vote and help them rise.</p>
+          <Link href="/discover">
+            Discover talent <ArrowUpRight />
+          </Link>
+        </div>
+        <figure className="stage-photo stage-photo-wide">
+          <Image src="/images/atmosphere/orange-stage-crowd.jpg" alt="A real concert crowd facing a stage illuminated by orange lights" fill priority sizes="(max-width: 700px) 100vw, 62vw" />
+        </figure>
+        <figure className="stage-photo stage-photo-tall">
+          <Image src="/images/atmosphere/singer-silhouette.jpg" alt="A singer performing in silhouette under warm orange stage lights" fill sizes="(max-width: 700px) 48vw, 22vw" />
+        </figure>
+        <figure className="stage-photo stage-photo-detail">
+          <Image src="/images/atmosphere/performer-orange-stage.jpg" alt="A live performer beneath a strong orange spotlight" fill sizes="(max-width: 700px) 48vw, 22vw" />
+        </figure>
       </section>
       <section className="feed-hero">
         <div className="featured-round-summary">
