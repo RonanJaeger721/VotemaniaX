@@ -289,10 +289,18 @@ h1 em,
   margin: auto;
   padding: 90px 0 70px;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) minmax(336px, auto);
   gap: 70px;
   align-items: end;
   border-bottom: 1px solid var(--line);
+}
+.round-hero > *,
+.round-banner > * {
+  min-width: 0;
+}
+.round-hero .countdown-wrap,
+.round-banner .countdown-wrap {
+  width: min(100%, 430px);
 }
 .round-hero > div:first-child > p:not(.live-pill) {
   color: #a9a9a9;
@@ -379,7 +387,7 @@ h1 em,
   min-height: 78px;
   border-top: 1px solid var(--line);
   display: grid;
-  grid-template-columns: 56px 1fr 120px 80px;
+  grid-template-columns: 56px minmax(0, 1fr) 120px minmax(190px, auto);
   align-items: center;
   gap: 18px;
 }
@@ -404,6 +412,9 @@ h1 em,
 .vote-now {
   padding: 10px 16px;
   text-align: center;
+  min-width: 190px;
+  white-space: normal;
+  line-height: 1.25;
   clip-path: polygon(0 0, 90% 0, 100% 28%, 100% 100%, 10% 100%, 0 72%);
 }
 .round-leaderboard article {
@@ -547,10 +558,17 @@ h1 em,
     width: calc(100% - 28px);
   }
   .round-roster article {
-    grid-template-columns: 38px 1fr auto;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px 0;
   }
   .round-roster article > strong {
     display: none;
+  }
+  .round-roster article .vote-now {
+    grid-column: 2;
+    width: 100%;
+    min-width: 0;
   }
   .round-leaderboard article {
     grid-template-columns: 38px 1fr 58px 52px;
@@ -628,7 +646,7 @@ h1 em,
   padding: 18px 22px;
   border: 1px solid rgba(254, 121, 1, 0.3);
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: minmax(220px, 1fr) minmax(260px, 340px) minmax(0, auto);
   align-items: center;
   gap: 28px;
   background: #0b0b0b;
@@ -661,6 +679,7 @@ h1 em,
 }
 .banner-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 .banner-actions a {
@@ -1505,13 +1524,22 @@ h1 em,
   color: #fe7901;
   border: 1px solid rgba(254, 121, 1, 0.4);
 }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .round-banner {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .round-banner .countdown-wrap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    max-width: 560px;
   }
   .banner-actions {
-    grid-column: 1/-1;
+    grid-column: 2;
+    grid-row: 1;
   }
+}
+@media (max-width: 900px) {
   .feed-hero {
     grid-template-columns: 1fr;
   }

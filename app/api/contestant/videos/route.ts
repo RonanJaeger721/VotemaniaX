@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
+import { appUrl } from '@/lib/app-url';
 import { getDb } from '@/db';
 import { videoConsents, videoSubmissions } from '@/db/schema';
 import { getContestantForUser, getSessionUser } from '@/lib/auth';
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
   const data = await request.formData();
   if (data.get('consent') !== 'on')
     return NextResponse.redirect(
-      new URL('/contestant/videos?error=consent', request.url),
+      appUrl(request, '/contestant/videos?error=consent'),
       303,
     );
   const files = data
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     .filter((item): item is File => item instanceof File);
   if (!files.length || files.length > 8)
     return NextResponse.redirect(
-      new URL('/contestant/videos?error=files', request.url),
+      appUrl(request, '/contestant/videos?error=files'),
       303,
     );
   const allowed = new Set(['video/mp4', 'video/webm', 'video/quicktime']);
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
     )
   )
     return NextResponse.redirect(
-      new URL('/contestant/videos?error=file', request.url),
+      appUrl(request, '/contestant/videos?error=file'),
       303,
     );
   const round = await getCurrentRound();
@@ -82,7 +83,7 @@ export async function POST(request: Request) {
       });
   }
   return NextResponse.redirect(
-    new URL('/contestant/videos?uploaded=1', request.url),
+    appUrl(request, '/contestant/videos?uploaded=1'),
     303,
   );
 }

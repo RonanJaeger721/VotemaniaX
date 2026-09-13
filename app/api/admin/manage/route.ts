@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appUrl } from '@/lib/app-url';
 import { getChatGPTUser } from '@/app/chatgpt-auth';
 import { getDb } from '@/db';
 import {
@@ -109,7 +110,7 @@ export async function POST(request: Request) {
       payload: JSON.stringify(Object.fromEntries(form)),
       createdAt: now,
     });
-  return NextResponse.redirect(new URL(destination, request.url), 303);
+  return NextResponse.redirect(appUrl(request, destination), 303);
 }
 function idAction(type: string, form: FormData) {
   return form.get('id') ? `update_${type}` : `create_${type}`;

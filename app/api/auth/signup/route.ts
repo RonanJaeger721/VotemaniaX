@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appUrl } from '@/lib/app-url';
 import { eq } from 'drizzle-orm';
 import { getDb } from '@/db';
 import { contestantAccounts, contestants, users } from '@/db/schema';
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
   const category = String(data.get('category') ?? 'Other Talent');
   if (fullName.length < 2 || !email.includes('@') || password.length < 8)
     return NextResponse.redirect(
-      new URL('/auth/contestant/signup?error=check-details', request.url),
+      appUrl(request, '/auth/contestant/signup?error=check-details'),
       303,
     );
   const db = getDb();
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
     )[0]
   )
     return NextResponse.redirect(
-      new URL('/auth/contestant/signup?error=account-exists', request.url),
+      appUrl(request, '/auth/contestant/signup?error=account-exists'),
       303,
     );
   const now = new Date();
@@ -80,5 +81,5 @@ export async function POST(request: Request) {
     .insert(contestantAccounts)
     .values({ userId: user.id, contestantId: contestant.id, createdAt: now });
   await createSession(user.id);
-  return NextResponse.redirect(new URL('/contestant', request.url), 303);
+  return NextResponse.redirect(appUrl(request, '/contestant'), 303);
 }

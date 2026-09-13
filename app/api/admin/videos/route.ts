@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appUrl } from '@/lib/app-url';
 import { eq } from 'drizzle-orm';
 import { getDb } from '@/db';
 import { auditLogs, videoSubmissions } from '@/db/schema';
@@ -34,7 +35,7 @@ export async function POST(request: Request) {
       createdAt: now,
     });
   return NextResponse.redirect(
-    new URL('/admin/video-review', request.url),
+    appUrl(request, '/admin/video-review'),
     303,
   );
 }

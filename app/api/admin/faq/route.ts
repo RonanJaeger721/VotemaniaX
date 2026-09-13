@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appUrl } from '@/lib/app-url';
 import { getDb } from '@/db';
 import { auditLogs, faqs } from '@/db/schema';
 import { getChatGPTUser } from '@/app/chatgpt-auth';
@@ -42,5 +43,5 @@ export async function POST(request: Request) {
       entityId: id ? String(id) : String(data.get('id') || ''),
       createdAt: new Date(),
     });
-  return NextResponse.redirect(new URL('/admin/faq?saved=1', request.url), 303);
+  return NextResponse.redirect(appUrl(request, '/admin/faq?saved=1'), 303);
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appUrl } from '@/lib/app-url';
 import { eq } from 'drizzle-orm';
 import { getDb } from '@/db';
 import { auditLogs, categories } from '@/db/schema';
@@ -50,5 +51,5 @@ export async function POST(request: Request) {
         createdAt: new Date(),
       });
   }
-  return NextResponse.redirect(new URL('/admin/categories?saved=1', request.url), 303);
+  return NextResponse.redirect(appUrl(request, '/admin/categories?saved=1'), 303);
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { appUrl } from '@/lib/app-url';
 import { getChatGPTUser } from '@/app/chatgpt-auth';
 import { getDb } from '@/db';
 import { auditLogs, events, votingRounds } from '@/db/schema';
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
       : { status: 'closed', endAt: now, closedAt: now }
     ).where(eq(votingRounds.id, roundId));
     await db.insert(auditLogs).values({ adminUserId: user.userId, action: `${action}_voting_round`, entityType: 'voting_round', entityId: String(roundId), createdAt: now });
-    return NextResponse.redirect(new URL(`/admin/voting-rounds?saved=${action}`, request.url), 303);
+    return NextResponse.redirect(appUrl(request, `/admin/voting-rounds?saved=${action}`), 303);
   }
   if (action !== 'create-next')
     return NextResponse.json(
@@ -76,7 +77,7 @@ export async function POST(request: Request) {
       createdAt: now,
     });
   return NextResponse.redirect(
-    new URL('/admin/voting-rounds', request.url),
+    appUrl(request, '/admin/voting-rounds'),
     303,
   );
 }

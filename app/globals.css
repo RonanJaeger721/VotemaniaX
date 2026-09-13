@@ -1061,12 +1061,21 @@ h1 em {
   position: fixed;
   width: 250px;
   height: 100vh;
+  height: 100dvh;
   padding: 28px 20px;
   border-right: 1px solid var(--line);
   background: #101010;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #fe7901 #101010;
 }
+.admin-shell > aside::-webkit-scrollbar { width: 6px; }
+.admin-shell > aside::-webkit-scrollbar-track { background: #101010; }
+.admin-shell > aside::-webkit-scrollbar-thumb { background: #fe7901; border-radius: 999px; }
 .admin-shell aside > small {
   margin: 34px 12px 14px;
   color: #5f5868;

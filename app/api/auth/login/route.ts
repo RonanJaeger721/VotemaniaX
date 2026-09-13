@@ -3,22 +3,38 @@ import { eq } from 'drizzle-orm';
 import { getDb } from '@/db';
 import { users } from '@/db/schema';
 import { createSession, verifyPassword } from '@/lib/auth';
+import { appUrl } from '@/lib/app-url';
 
-const INITIAL_ADMIN_LOGIN = 'traqchitida';
+const INITIAL_ADMIN_LOGIN =
+  process.env.VOTEMANIAX_INITIAL_ADMIN_EMAIL?.trim().toLowerCase() ||
+  'traqchitida@gmail.com';
+const LEGACY_ADMIN_LOGIN = 'traqchitida';
 async function ensureInitialAdmin() {
   const passwordHash = process.env.VOTEMANIAX_INITIAL_ADMIN_PASSWORD_HASH;
   if (!passwordHash) return;
-  await getDb()
-    .insert(users)
-    .values({
-      email: INITIAL_ADMIN_LOGIN,
-      passwordHash,
-      role: 'super-admin',
-      displayName: 'Traqchitida',
-      status: 'active',
-      createdAt: new Date(),
-    })
-    .onConflictDoNothing({ target: users.email });
+  const db = getDb();
+  const existing = (
+    await db.select().from(users).where(eq(users.email, INITIAL_ADMIN_LOGIN)).limit(1)
+  )[0];
+  if (existing) {
+    await db.update(users).set({ passwordHash, role: 'super-admin', status: 'active' }).where(eq(users.id, existing.id));
+  } else {
+    const legacy = (
+      await db.select().from(users).where(eq(users.email, LEGACY_ADMIN_LOGIN)).limit(1)
+    )[0];
+    if (legacy) {
+      await db.update(users).set({ email: INITIAL_ADMIN_LOGIN, passwordHash, role: 'super-admin', status: 'active' }).where(eq(users.id, legacy.id));
+    } else {
+      await db.insert(users).values({
+        email: INITIAL_ADMIN_LOGIN,
+        passwordHash,
+        role: 'super-admin',
+        displayName: 'Traqchitida',
+        status: 'active',
+        createdAt: new Date(),
+      });
+    }
+  }
 }
 
 export async function POST(request: Request) {
@@ -39,7 +55,7 @@ export async function POST(request: Request) {
     !(await verifyPassword(password, user.passwordHash))
   )
     return NextResponse.redirect(
-      new URL(portal === 'admin' ? '/admin/login?error=invalid' : '/auth/contestant/login?error=invalid', request.url),
+      appUrl(request, portal === 'admin' ? '/admin/login?error=invalid' : '/auth/contestant/login?error=invalid'),
       303,
     );
   await createSession(user.id);
@@ -48,7 +64,7 @@ export async function POST(request: Request) {
     .set({ lastLoginAt: new Date() })
     .where(eq(users.id, user.id));
   return NextResponse.redirect(
-    new URL(['admin', 'super-admin'].includes(user.role) ? '/admin/dashboard' : user.role === 'contestant' ? '/contestant' : '/', request.url),
+    appUrl(request, ['admin', 'super-admin'].includes(user.role) ? '/admin/dashboard' : user.role === 'contestant' ? '/contestant' : '/'),
     303,
   );
 }
