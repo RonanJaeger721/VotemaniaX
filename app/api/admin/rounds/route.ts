@@ -12,6 +12,34 @@ export async function POST(request: Request) {
   const action = String(form.get('action') || '');
   const roundId = Number(form.get('id') || 0);
   const db = getDb();
+  if (action === 'schedule' && roundId) {
+    const startAt = parseHarareDateTime(String(form.get('startAt') || ''));
+    const endAt = parseHarareDateTime(String(form.get('endAt') || ''));
+    const status = String(form.get('status') || 'draft');
+    if (!startAt || !endAt || endAt <= startAt || !['draft', 'live', 'closed'].includes(status)) {
+      return NextResponse.redirect(appUrl(request, '/admin/voting-rounds?error=invalid-window'), 303);
+    }
+    const now = new Date();
+    if (status === 'live') {
+      await db.update(votingRounds).set({ status: 'closed', closedAt: now }).where(eq(votingRounds.status, 'live'));
+    }
+    await db.update(votingRounds).set({
+      startAt,
+      endAt,
+      status,
+      publishedAt: status === 'live' ? now : null,
+      closedAt: status === 'closed' ? now : null,
+    }).where(eq(votingRounds.id, roundId));
+    await db.insert(auditLogs).values({
+      adminUserId: user.userId,
+      action: 'schedule_voting_round',
+      entityType: 'voting_round',
+      entityId: String(roundId),
+      payload: JSON.stringify({ startAt: startAt.toISOString(), endAt: endAt.toISOString(), status }),
+      createdAt: now,
+    });
+    return NextResponse.redirect(appUrl(request, '/admin/voting-rounds?saved=schedule'), 303);
+  }
   if (['start', 'close'].includes(action) && roundId) {
     const now = new Date();
     await db.update(votingRounds).set(action === 'start'
@@ -80,4 +108,10 @@ export async function POST(request: Request) {
     appUrl(request, '/admin/voting-rounds'),
     303,
   );
+}
+
+function parseHarareDateTime(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return null;
+  const parsed = new Date(`${value}:00+02:00`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
